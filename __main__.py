@@ -203,7 +203,7 @@ def main():
         lag_choice, min_data_choice, max_data_choice, trans_cost_choice,
         factor_choices, factor_pca_choice, factor_moment_choice, factor_zscore_choice,
         pull_db, table_name_pull, futures_map))
-    if st.session_state.running_time:
+    if st.session_state.running_time in locals():
         st.success(f'Factors updated in {round(st.session_state.running_time,2)} seconds.')
     
     # show the user underlying factor data if desired
