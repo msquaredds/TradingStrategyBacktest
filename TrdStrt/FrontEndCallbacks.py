@@ -151,14 +151,8 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         # determine the key index locations and run the random forest
         backtest.index_locs()
         for curr_period in range(backtest.start_of_strat, backtest.factors.shape[0] + 1):
-            print('---------------')
-            print('curr_period: ', curr_period)
-            print('---------------')
-
             backtest.rf_classify(end_loc=curr_period, pca_depen=dependent_pca_choice,
                 tree_count=tree_count_choice, node_count=node_count_choice)
-            if backtest.probs is not None:
-                print(backtest.probs.iloc[curr_period-1,:])
                 
         # set this so we can use it later
         st.session_state.backtest = backtest
@@ -186,13 +180,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         
         # run the holdings method
         for curr_period in range(backtest.start_of_strat, backtest.factors.shape[0] + 1):
-            print('---------------')
-            print('curr_period: ', curr_period)
-            print('---------------')
-
             backtest.top_x_bottom_x_hold(curr_period, number_to_hold)
-            if backtest.holdings is not None:
-                print(backtest.holdings.iloc[curr_period-1,:])
                 
         # set this so we can use it later
         st.session_state.backtest = backtest
