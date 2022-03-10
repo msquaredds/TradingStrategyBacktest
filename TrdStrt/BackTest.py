@@ -1027,6 +1027,7 @@ class BackTest(ts.HelperFunctions):
                             # the index will the the previous index
                             # multiplied by (1 + those returns)
                             if self.horizon == 1:
+				print(index)
                                 self.tranch_rets.loc[index] = (self.daily_rets.loc[index,:]
                                     .values.dot(self.holdings.iloc[index_int
                                     - self.lag - curr_lookback[column],:].T.values))
