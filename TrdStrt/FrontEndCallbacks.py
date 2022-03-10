@@ -146,7 +146,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
             print('curr_period: ', curr_period)
             print('---------------')
 
-            backtest.rf_classify(curr_period, pca_depen=dependent_pca_choice,
+            backtest.rf_classify(end_loc=curr_period, pca_depen=dependent_pca_choice,
                 tree_count=tree_count_choice, node_count=node_count_choice)
             if backtest.probs is not None:
                 print(backtest.probs.iloc[curr_period-1,:])
