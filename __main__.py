@@ -104,9 +104,17 @@ def main():
     # we should limit how many futures can be held based on the choice
     # above
     max_futures_count = math.floor(len(futures_choices) / 2.0)
-    futures_count_choice = st.slider("How many futures would you like to hold "
-        "on each side (long and short)?", min_value=1,
-        max_value=max_futures_count, value=max_futures_count)
+    if max_futures_count > 1:
+        futures_count_choice = st.slider("How many futures would you like to hold "
+            "on each side (long and short)?", min_value=1,
+            max_value=max_futures_count, value=max_futures_count)
+    else:
+        st.markdown("Given the number of futures you're using, "
+            "you will have 1 future long and 1 short. If you choose 4 or more "
+            "futures you will ahve the option of choosing the number of futures "
+            "to go long/short.")
+        futures_count_choice = 1
+        
         
     # then let them set the basic options
     st.markdown("___")
