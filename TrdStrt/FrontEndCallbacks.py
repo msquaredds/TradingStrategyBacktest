@@ -122,8 +122,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        running_time = time.time() - start_time
-        st.success(f'Factors updated in {round(running_time,2)} seconds.')
+        st.session_state.running_time = time.time() - start_time
         
         
     def update_randomforest(self, tree_count_choice, node_count_choice, dependent_pca_choice):
@@ -165,8 +164,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        running_time = time.time() - start_time
-        st.success(f'Probabilities updated in {round(running_time,2)} seconds.')
+        st.session_state.running_time = time.time() - start_time
         
     def update_holdings(self, number_to_hold):
         '''
@@ -200,8 +198,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        running_time = time.time() - start_time
-        st.success(f'Holdings updated in {round(running_time,2)} seconds.')
+        st.session_state.running_time = time.time() - start_time
         
     def update_strategy_returns_index(self):
         '''
@@ -224,5 +221,4 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        running_time = time.time() - start_time
-        st.success(f'Strategy results updated in {round(running_time,2)} seconds.')
+        st.session_state.running_time = time.time() - start_time
