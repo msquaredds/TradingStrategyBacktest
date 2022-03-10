@@ -14,6 +14,7 @@ import TrdStrt as ts
 
 import sqlite3
 import streamlit as st
+import time
 
 class FrontEndCallbacks(ts.FrontEndHelpers):
     '''
@@ -80,6 +81,8 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         Returns:
             N/A
         '''
+        # record the time to show user
+        start_time = time.time()
         
         # pull in the data based on the options chosen above
         columns_to_pull = self.define_data_pull_columns(futures_choices, factor_choices)
@@ -118,6 +121,10 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.columns_to_pull = columns_to_pull
         st.session_state.backtest = backtest
         
+        # show user time to run
+        running_time = time.time() - start_time
+        st.success(f'Factors updated in {round(running_time,2)} seconds.')
+        
         
     def update_randomforest(self, tree_count_choice, node_count_choice, dependent_pca_choice):
         '''
@@ -137,6 +144,9 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         Returns:
             N/A
         '''
+        # record the time to show user
+        start_time = time.time()
+        
         backtest = st.session_state.backtest
         
         # determine the key index locations and run the random forest
@@ -154,6 +164,10 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         # set this so we can use it later
         st.session_state.backtest = backtest
         
+        # show user time to run
+        running_time = time.time() - start_time
+        st.success(f'Probabilities updated in {round(running_time,2)} seconds.')
+        
     def update_holdings(self, number_to_hold):
         '''
         Takes user options and uses the calculated probabilities to
@@ -167,6 +181,9 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         Returns:
             N/A
         '''
+        # record the time to show user
+        start_time = time.time()
+        
         backtest = st.session_state.backtest
         
         # run the holdings method
@@ -182,6 +199,10 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         # set this so we can use it later
         st.session_state.backtest = backtest
         
+        # show user time to run
+        running_time = time.time() - start_time
+        st.success(f'Holdings updated in {round(running_time,2)} seconds.')
+        
     def update_strategy_returns_index(self):
         '''
         Creates the strategy returns and index for plotting and metrics.
@@ -192,9 +213,16 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         Returns:
             N/A
         '''
+        # record the time to show user
+        start_time = time.time()
+        
         backtest = st.session_state.backtest
         
         backtest.hold_to_index()
                 
         # set this so we can use it later
         st.session_state.backtest = backtest
+        
+        # show user time to run
+        running_time = time.time() - start_time
+        st.success(f'Strategy results updated in {round(running_time,2)} seconds.')
