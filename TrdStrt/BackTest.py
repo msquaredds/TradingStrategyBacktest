@@ -503,7 +503,7 @@ class BackTest(ts.HelperFunctions):
             print('--Creating the returns-based factors')
             if self.daily_rets is None:
                 st.error('************* Error *************')
-                st.error('Daily Returns (daily_rets) must be defined before',
+                st.error('Daily Returns (daily_rets) must be defined before '
                     'running the factor creation with factor_rets.')
             else:
                 rets_factors = self.daily_rets.copy()
@@ -535,7 +535,7 @@ class BackTest(ts.HelperFunctions):
             print('--Creating the volume-based factors')
             if self.df is None:
                 st.error('************* Error *************')
-                st.error('The DataFrame (df) must be defined before',
+                st.error('The DataFrame (df) must be defined before '
                     'running the factor creation with factor_volume.')
             else:
                 vol_factors = self.df.copy()
@@ -590,11 +590,11 @@ class BackTest(ts.HelperFunctions):
             print('--Creating the term structure factors')
             if self.days_to_expiry is None:
                 st.error('************* Error *************')
-                st.error('Days to Expiry (days_to_expiry) must be defined before',
+                st.error('Days to Expiry (days_to_expiry) must be defined before '
                     'running the factor creation with factor_slope.')
             elif self.df is None:
                 st.error('************* Error *************')
-                st.error('The DataFrame (df) must be defined before',
+                st.error('The DataFrame (df) must be defined before '
                     'running the factor creation with factor_slope.')
             else:
                 slope_factors = self.df.copy()
@@ -647,11 +647,11 @@ class BackTest(ts.HelperFunctions):
             print('--Creating the VIX vs S&P vol factors')
             if self.daily_rets is None:
                 st.error('************* Error *************')
-                st.error('Daily Returns (daily_rets) must be defined before',
+                st.error('Daily Returns (daily_rets) must be defined before '
                     'running the factor creation with factor_vix_vs_vol.')
             elif self.df is None:
                 st.error('************* Error *************')
-                st.error('The DataFrame (df) must be defined before',
+                st.error('The DataFrame (df) must be defined before '
                     'running the factor creation with factor_vix_vs_vol.')
             else:
                 # we compare the vix to the rolling std dev of the s&p
@@ -712,7 +712,7 @@ class BackTest(ts.HelperFunctions):
         
         if self.factors is None:
             st.error('************* Error *************')
-            st.error('Factors (factors) must be defined before running the index',
+            st.error('Factors (factors) must be defined before running the index '
                 'location method.')
         else:
             # find where the factors have all data and the last index
@@ -736,8 +736,8 @@ class BackTest(ts.HelperFunctions):
                 recent_day_limit = self.factors.index.get_loc(last_index) - self.first_data + 1
                 if recent_day_limit < num_recent_days:
                     st.warning('************* Warning *************')
-                    st.warning('Too much data requested. Not enough factor',
-                        ' data to support. Using what is available.')
+                    st.warning('Too much data requested. Not enough factor '
+                        'data to support. Using what is available.')
                     num_recent_days = recent_day_limit
                 self.start_of_strat = self.factors.index.get_loc(last_index) - num_recent_days
             
@@ -793,7 +793,7 @@ class BackTest(ts.HelperFunctions):
         print('Running the rf_classify method (', datetime.now().strftime("%Y-%m-%d %H:%M:%S"), ')')
         
         # define independent and dependent data
-        print('--Defining the independent and dependent data, as well',
+        print('--Defining the independent and dependent data, as well '
             'as the training and test sets')
         if self.factors is None:
             st.error('************* Error *************')
@@ -807,7 +807,7 @@ class BackTest(ts.HelperFunctions):
         # the minimum required
         if (end_loc-1) < self.start_of_strat:
             st.error('************* Error *************')
-            st.error('The end_loc must be at least at the start_of_strat',
+            st.error('The end_loc must be at least at the start_of_strat '
                 'for rf_classify to run.')
             return
         
@@ -846,7 +846,7 @@ class BackTest(ts.HelperFunctions):
         rank_data_col_min = depen_train.idxmin(axis=1)
         # this will input the column value (int) where the highest and
         # lowest returns are
-        print('--Determining the columns of the highest and lowest',
+        print('--Determining the columns of the highest and lowest '
             'returning assets')
         for index_rank, value in rank_data_max.iteritems():
             try:
@@ -923,18 +923,18 @@ class BackTest(ts.HelperFunctions):
         # the minimum required
         if (end_loc-1) < self.start_of_strat:
             st.error('************* Error *************')
-            st.error('The end_loc must be at least at the start_of_strat',
+            st.error('The end_loc must be at least at the start_of_strat '
                 'for top_x_bottom_x_hold to run.')
             return
             
         # error handling for what we need defined before this can run
         if self.daily_rets is None:
             st.error('************* Error *************')
-            st.error('Daily Returns (daily_rets) must be defined before',
+            st.error('Daily Returns (daily_rets) must be defined before '
                 ' running the top_x_bottom_x_hold method.')
         if self.probs is None:
             st.error('************* Error *************')
-            st.error('Probabilities of futures being the highest returning',
+            st.error('Probabilities of futures being the highest returning '
                 '(probs) must be defined before running the top_x_bottom_x_hold method.')
             
         # make sure we aren't choosing too many holdings
@@ -1113,7 +1113,7 @@ class BackTest(ts.HelperFunctions):
         # error handling for what we need defined before this can run
         if self.strat_rets is None:
             st.error('************* Error *************')
-            st.error('Strategy returns (strat_rets) must be defined before',
+            st.error('Strategy returns (strat_rets) must be defined before '
                 ' running the metrics code.')
         
         # Store the horizon and lookback in a list
@@ -1173,11 +1173,11 @@ class BackTest(ts.HelperFunctions):
         # error handling for what we need defined before this can run
         if self.strat_index is None:
             st.error('************* Error *************')
-            st.error('Strategy index (strat_index) must be defined before',
+            st.error('Strategy index (strat_index) must be defined before '
                 ' running plot_strat.')
         if self.daily_rets is None:
             st.error('************* Error *************')
-            st.error('Daily Returns (daily_rets) must be defined before',
+            st.error('Daily Returns (daily_rets) must be defined before '
                 ' running plot_strat.')
             
         # Create indexes for the S&P 500 if desired
