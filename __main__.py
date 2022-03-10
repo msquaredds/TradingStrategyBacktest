@@ -254,9 +254,9 @@ def main():
     st.markdown("Do this after (re-)running options above for the RandomForest, "
         "or re-running the factors so that you can access the new probabilities.")
     st.markdown("Note that this can take up to 15 minutes to run.")
-    st.write(tree_count_choice)
-    st.write(node_count_choice)
-    st.write(dependent_pca_choice)
+    st.write(type(tree_count_choice))
+    st.write(type(node_count_choice))
+    st.write(type(dependent_pca_choice))
     st.button('Run RandomForest', on_click=front_end_callbacks.update_randomforest,
         args=(tree_count_choice, node_count_choice, dependent_pca_choice))    
         
