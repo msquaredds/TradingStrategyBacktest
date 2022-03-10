@@ -203,8 +203,8 @@ def main():
         lag_choice, min_data_choice, max_data_choice, trans_cost_choice,
         factor_choices, factor_pca_choice, factor_moment_choice, factor_zscore_choice,
         pull_db, table_name_pull, futures_map))
-    if hasattr(st.session_state, 'running_time'):
-        st.success(f'Factors updated in {round(st.session_state.running_time,2)} seconds.')
+    if hasattr(st.session_state, 'running_time_factors'):
+        st.success(f'Factors updated in {round(st.session_state.running_time_factors,2)} seconds.')
     
     # show the user underlying factor data if desired
     st.markdown("___")
@@ -257,7 +257,9 @@ def main():
         "or re-running the factors so that you can access the new probabilities.")
     st.markdown("Note that this can take up to 15 minutes to run.")
     st.button('Run RandomForest', on_click=front_end_callbacks.update_randomforest,
-        args=(tree_count_choice, node_count_choice, dependent_pca_choice))    
+        args=(tree_count_choice, node_count_choice, dependent_pca_choice))
+    if hasattr(st.session_state, 'running_time_random_forest'):
+        st.success(f'Probabilities updated in {round(st.session_state.running_time_random_forest,2)} seconds.')
         
     # show the user probability data if desired
     st.markdown("___")
@@ -289,7 +291,9 @@ def main():
     st.markdown("Do this after (re-)running the RandomForest so you can get the new holdings.")
     st.markdown("Note that this can take 1 minute to run.")
     st.button('Run Holdings', on_click=front_end_callbacks.update_holdings,
-        args=(futures_count_choice, ))    
+        args=(futures_count_choice, ))
+    if hasattr(st.session_state, 'running_time_holdings'):
+        st.success(f'Holdings updated in {round(st.session_state.running_time_holdings,2)} seconds.')
         
     # show the user probability data if desired
     st.markdown("___")
@@ -322,6 +326,8 @@ def main():
         "new returns and associated metrics.")
     st.markdown("Note that this can take 1 minute to run.")
     st.button('Run Results', on_click=front_end_callbacks.update_strategy_returns_index)
+    if hasattr(st.session_state, 'running_time_strat_results'):
+        st.success(f'Strategy results updated in {round(st.session_state.running_time_strat_results,2)} seconds.')
         
     # show the user probability data if desired
     st.markdown("___")
