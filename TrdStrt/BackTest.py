@@ -56,14 +56,6 @@ class BackTest(ts.HelperFunctions):
         strat_metrics: Create strategy metrics.
         plot_strat: Plots the strategy, against S&P 500 and 10y Bond if
             desired.
-        
-        Currently unused methods, which might be useful later:
-        
-        rf_classify_cv: RandomForest classification of top/bottom
-            returning securities and uses cross-validation to optimize
-            the hyper-parameters.
-        coskew: Create a coskew tensor.
-        opt_hold: Determines the optimal securities holdings.
     '''
     
     def __init__(self, lookback, horizon, lag, min_data, max_data, trans_cost,
