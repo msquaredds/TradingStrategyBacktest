@@ -90,7 +90,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         
         # set up backtest class
         backtest = ts.BackTest(lookback_choice, horizon_choice, lag_choice,
-        min_data_choice, max_data_choice, trans_cost_choice)
+            min_data_choice, max_data_choice, trans_cost_choice)
         # set up and pull data
         db_connect_pull = sqlite3.connect(pull_db)
         backtest.data_pull(db_connect_pull, table_name_pull, columns_to_pull)
