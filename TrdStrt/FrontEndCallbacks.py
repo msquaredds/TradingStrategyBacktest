@@ -122,7 +122,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        st.session_state.running_time = time.time() - start_time
+        st.session_state.running_time_factors = time.time() - start_time
         
         
     def update_randomforest(self, tree_count_choice, node_count_choice, dependent_pca_choice):
@@ -164,7 +164,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        st.session_state.running_time = time.time() - start_time
+        st.session_state.running_time_random_forest = time.time() - start_time
         
     def update_holdings(self, number_to_hold):
         '''
@@ -198,7 +198,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        st.session_state.running_time = time.time() - start_time
+        st.session_state.running_time_holdings = time.time() - start_time
         
     def update_strategy_returns_index(self):
         '''
@@ -221,4 +221,4 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        st.session_state.running_time = time.time() - start_time
+        st.session_state.running_time_strat_results = time.time() - start_time
