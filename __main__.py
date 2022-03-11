@@ -28,8 +28,8 @@ def main():
     ####################################################################
     
     # set up titles
-    st.title("Futures Trading Strategy using Machine Learning (Web App)")
-    st.sidebar.title("Futures Trading Strategy using Machine Learning (Web App)")
+    st.title("Futures Trading Strategy using Machine Learning")
+    st.sidebar.title("Futures Trading Strategy using Machine Learning")
     
     # credit
     st.markdown("#### M Squared Data Science")
@@ -44,6 +44,8 @@ def main():
     st.markdown("#### Intro")
     st.markdown(written_outputs.intro_string)
     st.markdown(written_outputs.intro_explanation_string)
+    st.markdown(written_outputs.intro_details_string)
+    st.markdown(written_outputs.intro_running_details_string)
     
     st.sidebar.markdown(written_outputs.side_bar_explain_string_intro)
     
