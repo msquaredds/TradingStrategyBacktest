@@ -1032,8 +1032,11 @@ class BackTest(ts.HelperFunctions):
                                 self.tranch_rets.loc[index] = (self.daily_rets.loc[index,:]
                                     .values.dot(self.holdings.iloc[index_int
                                     - self.lag - curr_lookback[column],:].T.values))
+                                
                                 st.write(index)
                                 st.write(self.tranch_rets.loc[index])
+                                st.write(self.tranch_index.loc[index])
+                                st.write(self.tranch_index.iloc[index_int - 1])
                                 self.tranch_index.loc[index] = (self.tranch_index.iloc[index_int - 1]
                                     *(1.0 + self.tranch_rets.loc[index]))
                             else:
