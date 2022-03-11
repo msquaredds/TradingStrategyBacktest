@@ -359,31 +359,34 @@ def main():
     #################################################################### 
     
     # create the returns and metrics if desired
-    st.markdown("___")
-    st.markdown("___")
-    st.markdown("#### Run Strategy Results")
-    st.markdown("Do this after (re-)running the holdings so you can get the "
-        "new returns and associated metrics.")
-    st.markdown("Note that this can take up to a couple minutes to run.")
-    st.button('Run Results', on_click=front_end_callbacks.update_strategy_returns_index)
-    if hasattr(st.session_state, 'running_time_strat_results'):
-        st.success(f'Strategy results updated in {round(st.session_state.running_time_strat_results,2)} seconds.')
-        
-    # show the user probability data if desired
-    st.markdown("___")
-    st.markdown("#### Results")
-    if st.checkbox("Do you want to see charts of the strategy?"):
-        backtest = st.session_state.backtest
-        # let the user determine what to show
-        strategy_comparison_choice = st.multiselect("Would you like to compare against "
-            "the S&P 500 or 10 Year Treasury futures?",
-            ("S&P 500", "10 Year Treasuries"), default=("S&P 500", "10 Year Treasuries"))
-        fig_strat = backtest.plot_strat(strategy_comparison_choice)
-        st.plotly_chart(fig_strat)
-    if st.checkbox("Do you want to see the strategy metrics?"):
-        backtest = st.session_state.backtest
-        backtest.strat_metrics()
-        st.write(backtest.metrics)
+    # only show once the probabilities are created
+    if hasattr(st.session_state, 'backtest'):
+        if hasattr(st.session_state.backtest, 'holdings'):
+            st.markdown("___")
+            st.markdown("___")
+            st.markdown("#### Run Strategy Results")
+            st.markdown("Do this after (re-)running the holdings so you can get the "
+                "new returns and associated metrics.")
+            st.markdown("Note that this can take up to a couple minutes to run.")
+            st.button('Run Results', on_click=front_end_callbacks.update_strategy_returns_index)
+            if hasattr(st.session_state, 'running_time_strat_results'):
+                st.success(f'Strategy results updated in {round(st.session_state.running_time_strat_results,2)} seconds.')
+                
+            # show the user probability data if desired
+            st.markdown("___")
+            st.markdown("#### Results")
+            if st.checkbox("Do you want to see charts of the strategy?"):
+                backtest = st.session_state.backtest
+                # let the user determine what to show
+                strategy_comparison_choice = st.multiselect("Would you like to compare against "
+                    "the S&P 500 or 10 Year Treasury futures?",
+                    ("S&P 500", "10 Year Treasuries"), default=("S&P 500", "10 Year Treasuries"))
+                fig_strat = backtest.plot_strat(strategy_comparison_choice)
+                st.plotly_chart(fig_strat)
+            if st.checkbox("Do you want to see the strategy metrics?"):
+                backtest = st.session_state.backtest
+                backtest.strat_metrics()
+                st.write(backtest.metrics)
 
 
 if __name__ == '__main__':
