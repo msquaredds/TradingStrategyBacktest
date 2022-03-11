@@ -258,7 +258,7 @@ def main():
         
     # get user inputs for the random forest
     # only show once the factors are created
-    if hasattr(st.session_state, 'backtest.factors'):
+    if hasattr(st.session_state, 'backtest'):
         st.markdown("___")
         st.markdown("___")
         st.markdown("#### RandomForest Options")
