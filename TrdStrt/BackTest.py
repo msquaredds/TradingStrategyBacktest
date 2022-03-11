@@ -1027,13 +1027,15 @@ class BackTest(ts.HelperFunctions):
                             # the index will the the previous index
                             # multiplied by (1 + those returns)
                             if self.horizon == 1:
+                                st.write(type(index))
+                                st.write(type(self.tranch_rets.index))
+                                self.tranch_rets.loc[index] = (self.daily_rets.loc[index,:]
+                                    .values.dot(self.holdings.iloc[index_int
+                                    - self.lag - curr_lookback[column],:].T.values))
                                 st.write(index)
                                 st.write(self.tranch_rets)
                                 exit()
                                 break
-                                self.tranch_rets.loc[index] = (self.daily_rets.loc[index,:]
-                                    .values.dot(self.holdings.iloc[index_int
-                                    - self.lag - curr_lookback[column],:].T.values))
                                 self.tranch_index.loc[index] = (self.tranch_index.iloc[index_int - 1]
                                     *(1.0 + self.tranch_rets.loc[index]))
                             else:
@@ -1074,7 +1076,7 @@ class BackTest(ts.HelperFunctions):
                                 .values.dot(self.holdings.iloc[index_int
                                 - self.lag - curr_lookback[column],:].T.values) - trans_tot)
                             self.tranch_index.loc[index] = (self.tranch_index.iloc[index_int - 1]
-                                *(1.0 + self.tranch_rets[index]))
+                                *(1.0 + self.tranch_rets.loc[index]))
                         else:
                             self.tranch_rets.loc[index, column] = (self.daily_rets.loc[index,:]
                                 .values.dot(self.holdings.iloc[index_int
