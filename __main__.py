@@ -257,58 +257,60 @@ def main():
     ####################################################################  
         
     # get user inputs for the random forest
-    st.markdown("___")
-    st.markdown("___")
-    st.markdown("#### RandomForest Options")
-    st.markdown("RandomForests are used to estimate the probability "
-        "that a future will be the highest returning over the holding period "
-        "and to estimate that a future will be the lowest returning over "
-        "the holding period. Let's set options for those RandomForests.")
-    tree_count_choice = st.slider("How many trees would you like?",
-        min_value=10, max_value=200, value=100, step=10)
-    node_count_choice = st.slider("What is the max number of nodes you would like?",
-        min_value=10, max_value=100, value=20, step=10)
-    dependent_pca_choice = st.radio("Would you like to run PCA on the futures returns?",
-        ("Yes", "No"), help="We take the first X principal components, based "
-        "on what's significant vs random normal data and then keep only those "
-        "components for each existing factor. So we are not creating entirely new series "
-        "but de-noising those that already exist (see sidebar for more details).")
+    # only show once the factors are created
+    if hasattr(st.session_state, 'backtest.factors'):
+        st.markdown("___")
+        st.markdown("___")
+        st.markdown("#### RandomForest Options")
+        st.markdown("RandomForests are used to estimate the probability "
+            "that a future will be the highest returning over the holding period "
+            "and to estimate that a future will be the lowest returning over "
+            "the holding period. Let's set options for those RandomForests.")
+        tree_count_choice = st.slider("How many trees would you like?",
+            min_value=10, max_value=200, value=100, step=10)
+        node_count_choice = st.slider("What is the max number of nodes you would like?",
+            min_value=10, max_value=100, value=20, step=10)
+        dependent_pca_choice = st.radio("Would you like to run PCA on the futures returns?",
+            ("Yes", "No"), help="We take the first X principal components, based "
+            "on what's significant vs random normal data and then keep only those "
+            "components for each existing factor. So we are not creating entirely new series "
+            "but de-noising those that already exist (see sidebar for more details).")
 
-    # run the RandomForest if desired
-    st.markdown("___")
-    st.markdown("#### Run RandomForest")
-    st.markdown("Do this after (re-)running options above for the RandomForest, "
-        "or re-running the factors so that you can access the new probabilities.")
-    st.markdown("Note that this can take from 1 minute up to 20 minutes to run, "
-        "depending on the complexity.")
-    st.button('Run RandomForest', on_click=front_end_callbacks.update_randomforest,
-        args=(tree_count_choice, node_count_choice, dependent_pca_choice))
-    if hasattr(st.session_state, 'running_time_random_forest'):
-        st.success(f'Probabilities updated in {round(st.session_state.running_time_random_forest,2)} seconds.')
-        
-    # show the user probability data if desired
-    st.markdown("___")
-    st.markdown("#### Probability Data")
-    st.markdown("This is the probability a future will be the highest "
-        "returning in the holding period forward.")
-    if st.checkbox("Do you want to see a sample of the probabilities?"):
-        backtest = st.session_state.backtest
-        st.write(backtest.probs.tail())
-    if st.checkbox("Do you want to see charts of the probabilities?"):
-        backtest = st.session_state.backtest
-        # get the plain english version of the data column names so
-        # it's easier for the user to understand
-        prob_columns = backtest.probs.columns
-        plain_english_prob_columns, mapping_dict = front_end_helper.future_data_plain_english_mapping(prob_columns)
-        # let the user select the data to show
-        prob_data_choice = st.selectbox("Which futures probabilities do you want to see?", plain_english_prob_columns)
-        # get the column name in our data set
-        chart_prob_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(prob_data_choice)]
-        # create the chart and show it
-        fig_prob = px.line(backtest.probs[chart_prob_column],
-            labels={"value": ""}, title=prob_data_choice)
-        fig_prob.update_layout(showlegend=False)
-        st.plotly_chart(fig_prob)
+        # run the RandomForest if desired
+        st.markdown("___")
+        st.markdown("#### Run RandomForest")
+        st.markdown("Do this after (re-)running options above for the RandomForest, "
+            "or re-running the factors so that you can access the new probabilities.")
+        st.markdown("Note that this can take from 1 minute up to 20 minutes to run, "
+            "depending on the complexity.")
+        st.button('Run RandomForest', on_click=front_end_callbacks.update_randomforest,
+            args=(tree_count_choice, node_count_choice, dependent_pca_choice))
+        if hasattr(st.session_state, 'running_time_random_forest'):
+            st.success(f'Probabilities updated in {round(st.session_state.running_time_random_forest,2)} seconds.')
+            
+        # show the user probability data if desired
+        st.markdown("___")
+        st.markdown("#### Probability Data")
+        st.markdown("This is the probability a future will be the highest "
+            "returning in the holding period forward.")
+        if st.checkbox("Do you want to see a sample of the probabilities?"):
+            backtest = st.session_state.backtest
+            st.write(backtest.probs.tail())
+        if st.checkbox("Do you want to see charts of the probabilities?"):
+            backtest = st.session_state.backtest
+            # get the plain english version of the data column names so
+            # it's easier for the user to understand
+            prob_columns = backtest.probs.columns
+            plain_english_prob_columns, mapping_dict = front_end_helper.future_data_plain_english_mapping(prob_columns)
+            # let the user select the data to show
+            prob_data_choice = st.selectbox("Which futures probabilities do you want to see?", plain_english_prob_columns)
+            # get the column name in our data set
+            chart_prob_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(prob_data_choice)]
+            # create the chart and show it
+            fig_prob = px.line(backtest.probs[chart_prob_column],
+                labels={"value": ""}, title=prob_data_choice)
+            fig_prob.update_layout(showlegend=False)
+            st.plotly_chart(fig_prob)
 
     ####################################################################
     # Holdings
