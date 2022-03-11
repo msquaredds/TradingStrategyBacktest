@@ -318,40 +318,41 @@ def main():
     
     # run the holdings if desired
     # only show once the probabilities are created
-    if hasattr(st.session_state.backtest, 'probs'):
-        st.markdown("___")
-        st.markdown("___")
-        st.markdown("#### Run Holding Allocation")
-        st.markdown("Do this after (re-)running the RandomForest so you can get the new holdings.")
-        st.markdown("This only takes a few seconds to run.")
-        st.button('Run Holdings', on_click=front_end_callbacks.update_holdings,
-            args=(futures_count_choice, ))
-        if hasattr(st.session_state, 'running_time_holdings'):
-            st.success(f'Holdings updated in {round(st.session_state.running_time_holdings,2)} seconds.')
-            
-        # show the user holdings data if desired
-        st.markdown("___")
-        st.markdown("#### Holdings Data")
-        st.markdown("This is the percent of the portfolio we would have in each "
-            "security if we started our trading in that period.")
-        if st.checkbox("Do you want to see a sample of the holdings?"):
-            backtest = st.session_state.backtest
-            st.write(backtest.holdings.tail())
-        if st.checkbox("Do you want to see charts of the holdings?"):
-            backtest = st.session_state.backtest
-            # get the plain english version of the data column names so
-            # it's easier for the user to understand
-            hold_columns = backtest.holdings.columns
-            plain_english_hold_columns, mapping_dict = front_end_helper.future_data_plain_english_mapping(hold_columns)
-            # let the user select the data to show
-            hold_data_choice = st.selectbox("Which futures holdings do you want to see?", plain_english_hold_columns)
-            # get the column name in our data set
-            chart_hold_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(hold_data_choice)]
-            # create the chart and show it
-            fig_hold = px.line(backtest.holdings[chart_hold_column],
-                labels={"value": ""}, title=hold_data_choice)
-            fig_hold.update_layout(showlegend=False)
-            st.plotly_chart(fig_hold)
+    if hasattr(st.session_state, 'backtest'):
+        if hasattr(st.session_state.backtest, 'probs'):
+            st.markdown("___")
+            st.markdown("___")
+            st.markdown("#### Run Holding Allocation")
+            st.markdown("Do this after (re-)running the RandomForest so you can get the new holdings.")
+            st.markdown("This only takes a few seconds to run.")
+            st.button('Run Holdings', on_click=front_end_callbacks.update_holdings,
+                args=(futures_count_choice, ))
+            if hasattr(st.session_state, 'running_time_holdings'):
+                st.success(f'Holdings updated in {round(st.session_state.running_time_holdings,2)} seconds.')
+                
+            # show the user holdings data if desired
+            st.markdown("___")
+            st.markdown("#### Holdings Data")
+            st.markdown("This is the percent of the portfolio we would have in each "
+                "security if we started our trading in that period.")
+            if st.checkbox("Do you want to see a sample of the holdings?"):
+                backtest = st.session_state.backtest
+                st.write(backtest.holdings.tail())
+            if st.checkbox("Do you want to see charts of the holdings?"):
+                backtest = st.session_state.backtest
+                # get the plain english version of the data column names so
+                # it's easier for the user to understand
+                hold_columns = backtest.holdings.columns
+                plain_english_hold_columns, mapping_dict = front_end_helper.future_data_plain_english_mapping(hold_columns)
+                # let the user select the data to show
+                hold_data_choice = st.selectbox("Which futures holdings do you want to see?", plain_english_hold_columns)
+                # get the column name in our data set
+                chart_hold_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(hold_data_choice)]
+                # create the chart and show it
+                fig_hold = px.line(backtest.holdings[chart_hold_column],
+                    labels={"value": ""}, title=hold_data_choice)
+                fig_hold.update_layout(showlegend=False)
+                st.plotly_chart(fig_hold)
         
     ####################################################################
     # Results
