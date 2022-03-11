@@ -47,7 +47,7 @@ class WrittenOutputs(object):
             options to create the factors. Then a RandomForest is run based on user
             options to try to predict which futures will be the highest returning
             going forward. Based on that, we invest in the X number of futures long
-            and X number of futures short that the user would like.'''
+            and X number of futures, where X is chosen by the user.'''
             
         self.intro_running_details_string = '''Note that parts of the program - 
             particularly the RandomForest - can take a few minutes depending on the

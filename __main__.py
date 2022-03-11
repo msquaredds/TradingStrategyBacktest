@@ -86,13 +86,16 @@ def main():
     st.sidebar.markdown(written_outputs.side_bar_explain_string_metrics_chart_six_improvement)
     
     ####################################################################
-    # User Choices
+    # Futures & Factors
     ####################################################################
     
     # start by asking the user which futures they would like to include
     st.markdown("___")
     st.markdown("___")
     st.markdown("#### Futures Choices")
+    st.markdown("These are the futures that will be used to create the "
+        "factors (through their returns and/or volume) and are also the set "
+        "of possible futures to trade.")
     futures_choices = st.multiselect("What futures would you like to include (you must "
         "choose at least 2 for this to work)?",
         ("S&P 500", "Nasdaq", "Dow Jones", "2 Year Treasuries", "10 Year Treasuries",
@@ -113,10 +116,9 @@ def main():
     else:
         st.markdown("Given the number of futures you're using, "
             "you will have 1 future long and 1 short. If you choose 4 or more "
-            "futures you will ahve the option of choosing the number of futures "
+            "futures you will have the option of choosing the number of futures "
             "to go long/short.")
         futures_count_choice = 1
-        
         
     # then let them set the basic options
     st.markdown("___")
@@ -124,7 +126,8 @@ def main():
     st.markdown("Let's set all basic options for the strategy.")
     lookback_choice = st.slider("What lookback period (in days) would you like?",
         min_value=10, max_value=250, value=90, help="This is the lookback to calculate "
-        "the moments of the factor data and the z-scores.")
+        "the moments (mean, variance, skew) of the factor data and if you would like to "
+        "z-score the data, this is used for the lookback there as well.")
     horizon_choice = st.slider("What holding period (in days) would you like?",
         min_value=1, max_value=250, value=10)
     lag_choice = st.slider("How many days lag would you have between getting the daily "
@@ -132,7 +135,8 @@ def main():
         min_value=0, max_value=20, value=1)
     min_data_choice = st.slider("How many days of factor data would you like for the strategy "
         "to start running?",
-        min_value=10, max_value=250, value=90)
+        min_value=10, max_value=250, value=90, help="This is the min amount of days of factor data "
+        "we will have to start running the RandomForests.")
     max_data_choice = st.slider("What are the max number days of factor data you would "
         "like for the strategy to use at each point in time?",
         min_value=30, max_value=750, value=500,
@@ -147,21 +151,28 @@ def main():
     st.markdown("___")
     st.markdown("#### Factor Choices")
     st.markdown("Now determine which factors to use.")
+    st.markdown("Return-Based: Start with a series of each future's returns.")
+    st.markdown("Volume-Based: Start with a series of each future's volume.")
+    st.markdown("Slope of Term Structure: Looks at the expected annual return of "
+        "moving from the second futures contract to the first futures contract "
+        "assuming no change in the slope. Basically, we say what is the current "
+        "percent change between the two and then we annualize it to make it consistent "
+        "through time.")
+    st.markdown("S&P Volatility vs VIX: The diff between the actual (backward looking) "
+        "S&P volatility and the VIX at the time.")
     factor_choices = st.multiselect("What types would you like to include?",
         ("Return-Based", "Volume-Based", "Slope of Term Structure", "S&P Volatility vs VIX"),
-        default=("Return-Based", "Volume-Based", "Slope of Term Structure", "S&P Volatility vs VIX"),
-        help="Slope of Term Structure looks at the expected annual return of "
-        "moving from the second contract to the first assuming no change in the slope. "
-        "S&P Volatility vs VIX is the diff of the actual (backward looking) S&P volatility "
-        "and the VIX at the time.")
+        default=("Return-Based", "Volume-Based", "Slope of Term Structure", "S&P Volatility vs VIX"))
     if len(factor_choices) < 1:
         st.error("Must choose at least 1 factor type.")
-    factor_pca_choice = st.radio("Would you like to run PCA on your factors?",
+    factor_pca_choice = st.radio("Would you like to run PCA on your factors? We "
+        "do this separately for each subset of factor type (Return-Based, Volume-Based, etc).",
         ("Yes", "No"), help="We take the first X principal components, based "
         "on what's significant vs random normal data and then keep only those "
         "components for each existing factor. So we are not creating new factors "
-        "but de-noising those that already exist. Note that PCA isn't run on the "
-        "S&P Volatility vs VIX factor as that is only one data series.")
+        "but de-noising those that already exist (see the sidebar for more details). "
+        "Note that PCA isn't run on the S&P Volatility vs VIX factor as that is "
+        "only one data series.")
     factor_moment_choice = st.multiselect("What moments would you like to include?",
         ("Mean", "Variance", "Skew"), default=("Mean", "Variance", "Skew"),
         help="We take the rolling mean, variance and/or skew for each of the "
@@ -171,51 +182,32 @@ def main():
     factor_zscore_choice = st.multiselect("Do you want to z-score cross-sectionally "
         "and/or through time and/or leave the data as is?",
         ("Cross-Sectionally", "Through Time", "Non-Z-Scored"),
-        default=("Cross-Sectionally", "Through Time"))
+        default=("Cross-Sectionally", "Through Time"),
+        help="After pulling the data for each factor type, potentially running "
+        "PCA and taking the moments, we can then z-score with the same lookback "
+        "as chosen above.")
     if len(factor_zscore_choice) < 1:
         st.error("Must choose at least 1 z-score type (including non-z-score.")
         
-    # get user inputs for the random forest
-    st.markdown("___")
-    st.markdown("#### RandomForest Options")
-    st.markdown("A RandomForest is used to estimate the probability "
-        "that a future will be the highest returning over the holding period. "
-        "Let's set options for that RandomForest.")
-    tree_count_choice = st.slider("How many trees would you like?",
-        min_value=10, max_value=200, value=100, step=10)
-    node_count_choice = st.slider("What is the max number of nodes you would like?",
-        min_value=10, max_value=100, value=20, step=10)
-    dependent_pca_choice = st.radio("Would you like to run PCA on the futures returns?",
-        ("Yes", "No"), help="We take the first X principal components, based "
-        "on what's significant vs random normal data and then keep only those "
-        "components for each existing factor. So we are not creating entirely new series "
-        "but de-noising those that already exist.")
-    
-    ####################################################################
-    # Create Data and Show Info
-    ####################################################################
-    
     # set up helper class to be used later
     front_end_helper = ts.FrontEndHelpers()
     front_end_callbacks = ts.FrontEndCallbacks()
     
     # run the factors if desired
     st.markdown("___")
-    st.markdown("___")
     st.markdown("#### Run Factors")
-    st.markdown("Do this after (re-)setting options above (anything other than "
-        "the RandomForest options will impact this), so that you can access "
+    st.markdown("Do this after (re-)setting options above, so that you can access "
         "the new factors. If you do this and want to see the new RandomForest "
         "output and strategy output, the buttons below will have to be run as well.")
-    st.markdown("Note that this can take about 1 minute to run.")
+    st.markdown("Note that this can take up to 30 seconds to run.")
     st.button('Run Factors', on_click=front_end_callbacks.update_factors,
         args=(futures_choices, lookback_choice, horizon_choice,
         lag_choice, min_data_choice, max_data_choice, trans_cost_choice,
         factor_choices, factor_pca_choice, factor_moment_choice, factor_zscore_choice,
         pull_db, table_name_pull, futures_map))
     if hasattr(st.session_state, 'running_time_factors'):
-        st.success(f'Factors updated in {round(st.session_state.running_time_factors,2)} seconds.')
-    
+        st.success(f'Factors updated in {round(st.session_state.running_time_factors,2)} seconds.')  
+        
     # show the user underlying factor data if desired
     st.markdown("___")
     st.markdown("#### Underlying Factor Data")
@@ -237,7 +229,7 @@ def main():
             labels={"value": ""}, title=underlying_data_choice)
         fig_data.update_layout(showlegend=False)
         st.plotly_chart(fig_data)
-
+        
     # show the user factor data if desired
     st.markdown("___")
     st.markdown("#### Factors")
@@ -258,14 +250,37 @@ def main():
         fig_factors = px.line(backtest.factors[chart_factor_column],
             labels={"value": ""}, title=factor_data_choice)
         fig_factors.update_layout(showlegend=False)
-        st.plotly_chart(fig_factors)
-    
+        st.plotly_chart(fig_factors)    
+        
+    ####################################################################
+    # RandomForest
+    ####################################################################  
+        
+    # get user inputs for the random forest
+    st.markdown("___")
+    st.markdown("___")
+    st.markdown("#### RandomForest Options")
+    st.markdown("RandomForests are used to estimate the probability "
+        "that a future will be the highest returning over the holding period "
+        "and to estimate that a future will be the lowest returning over "
+        "the holding period. Let's set options for those RandomForests.")
+    tree_count_choice = st.slider("How many trees would you like?",
+        min_value=10, max_value=200, value=100, step=10)
+    node_count_choice = st.slider("What is the max number of nodes you would like?",
+        min_value=10, max_value=100, value=20, step=10)
+    dependent_pca_choice = st.radio("Would you like to run PCA on the futures returns?",
+        ("Yes", "No"), help="We take the first X principal components, based "
+        "on what's significant vs random normal data and then keep only those "
+        "components for each existing factor. So we are not creating entirely new series "
+        "but de-noising those that already exist (see sidebar for more details).")
+
     # run the RandomForest if desired
     st.markdown("___")
     st.markdown("#### Run RandomForest")
     st.markdown("Do this after (re-)running options above for the RandomForest, "
         "or re-running the factors so that you can access the new probabilities.")
-    st.markdown("Note that this can take up to 15 minutes to run.")
+    st.markdown("Note that this can take from 1 minute up to 20 minutes to run, "
+        "depending on the complexity.")
     st.button('Run RandomForest', on_click=front_end_callbacks.update_randomforest,
         args=(tree_count_choice, node_count_choice, dependent_pca_choice))
     if hasattr(st.session_state, 'running_time_random_forest'):
@@ -295,17 +310,21 @@ def main():
         fig_prob.update_layout(showlegend=False)
         st.plotly_chart(fig_prob)
 
+    ####################################################################
+    # Holdings
+    #################################################################### 
+    
     # run the holdings if desired
     st.markdown("___")
     st.markdown("#### Run Holding Allocation")
     st.markdown("Do this after (re-)running the RandomForest so you can get the new holdings.")
-    st.markdown("Note that this can take 1 minute to run.")
+    st.markdown("This only takes a few seconds to run.")
     st.button('Run Holdings', on_click=front_end_callbacks.update_holdings,
         args=(futures_count_choice, ))
     if hasattr(st.session_state, 'running_time_holdings'):
         st.success(f'Holdings updated in {round(st.session_state.running_time_holdings,2)} seconds.')
         
-    # show the user probability data if desired
+    # show the user holdings data if desired
     st.markdown("___")
     st.markdown("#### Holdings Data")
     st.markdown("This is the percent of the portfolio we would have in each "
@@ -329,12 +348,16 @@ def main():
         fig_hold.update_layout(showlegend=False)
         st.plotly_chart(fig_hold)
         
+    ####################################################################
+    # Results
+    #################################################################### 
+    
     # create the returns and metrics if desired
     st.markdown("___")
     st.markdown("#### Run Strategy Results")
     st.markdown("Do this after (re-)running the holdings so you can get the "
         "new returns and associated metrics.")
-    st.markdown("Note that this can take 1 minute to run.")
+    st.markdown("Note that this can take up to a couple minutes to run.")
     st.button('Run Results', on_click=front_end_callbacks.update_strategy_returns_index)
     if hasattr(st.session_state, 'running_time_strat_results'):
         st.success(f'Strategy results updated in {round(st.session_state.running_time_strat_results,2)} seconds.')
