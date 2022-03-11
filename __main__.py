@@ -316,6 +316,7 @@ def main():
     
     # run the holdings if desired
     st.markdown("___")
+    st.markdown("___")
     st.markdown("#### Run Holding Allocation")
     st.markdown("Do this after (re-)running the RandomForest so you can get the new holdings.")
     st.markdown("This only takes a few seconds to run.")
@@ -353,6 +354,7 @@ def main():
     #################################################################### 
     
     # create the returns and metrics if desired
+    st.markdown("___")
     st.markdown("___")
     st.markdown("#### Run Strategy Results")
     st.markdown("Do this after (re-)running the holdings so you can get the "
