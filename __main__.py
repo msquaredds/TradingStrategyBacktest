@@ -319,7 +319,7 @@ def main():
     # run the holdings if desired
     # only show once the probabilities are created
     if hasattr(st.session_state, 'backtest'):
-        if hasattr(st.session_state.backtest, 'probs'):
+        if st.session_state.backtest.probs is not None:
             st.markdown("___")
             st.markdown("___")
             st.markdown("#### Run Holding Allocation")
@@ -361,7 +361,7 @@ def main():
     # create the returns and metrics if desired
     # only show once the probabilities are created
     if hasattr(st.session_state, 'backtest'):
-        if hasattr(st.session_state.backtest, 'holdings'):
+        if st.session_state.backtest.holdings is not None:
             st.markdown("___")
             st.markdown("___")
             st.markdown("#### Run Strategy Results")
