@@ -42,13 +42,14 @@ class FrontEndHelpers(object):
         '''
         columns_to_pull = []
         
+        # we always need the S&P and 10y treasury in case the user wants
+        # to compare against those
+        columns_to_pull.append('ES1_Trade')
+        columns_to_pull.append('TY1_Trade')
+        
         if "S&P 500" in futures_choices:
-            if "Return-Based" in factor_choices:
-                columns_to_pull.append('ES1_Trade')
             if "Volume-Based" in factor_choices :
                 columns_to_pull.append('ES1_Volume')
-                if 'ES1_Trade' not in columns_to_pull:
-                    columns_to_pull.append('ES1_Trade')
             if "Slope of Term Structure" in factor_choices:
                 columns_to_pull.extend(['ES1_Last', 'ES2_Last'])
                 
@@ -83,12 +84,8 @@ class FrontEndHelpers(object):
                 columns_to_pull.extend(['TU1_Last', 'TU2_Last'])
                 
         if "10 Year Treasuries" in futures_choices:
-            if "Return-Based" in factor_choices:
-                columns_to_pull.append('TY1_Trade')
             if "Volume-Based" in factor_choices:
                 columns_to_pull.append('TY1_Volume')
-                if 'TY1_Trade' not in columns_to_pull:
-                    columns_to_pull.append('TY1_Trade')
             if "Slope of Term Structure" in factor_choices:
                 columns_to_pull.extend(['TY1_Last', 'TY2_Last'])  
                 
@@ -134,8 +131,6 @@ class FrontEndHelpers(object):
                 
         if "S&P Volatility vs VIX" in factor_choices:
             columns_to_pull.append('VIX_Last')    
-            if 'ES1_Trade' not in columns_to_pull:
-                columns_to_pull.append('ES1_Trade')
                 
         return columns_to_pull
         
