@@ -236,7 +236,7 @@ class BackTest(ts.HelperFunctions):
                 + pca_rand.explained_variance_ratio_)/(i+1.0)
         
         # find the principal components on the actual data
-        pca_actual = PCA()
+        pca_actual = PCA(whiten=True)
         pca_series = pca_actual.fit_transform(raw_data)
         
         # find the number of components to keep

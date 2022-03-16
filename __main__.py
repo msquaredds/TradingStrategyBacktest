@@ -20,8 +20,9 @@ import streamlit as st
 
 
 def main():
-    # get rid of unnecessary streamlit warning
+    # get rid of unnecessary streamlit warning and make wider
     st.set_option('deprecation.showPyplotGlobalUse', False)
+    st.set_page_config(layout="wide")
     
     ####################################################################
     # Explanations
