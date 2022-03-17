@@ -247,9 +247,10 @@ def main():
             labels={"value": ""}, title=underlying_data_choice)
         fig_data.update_layout(showlegend=False)
         st.plotly_chart(fig_data)
-    if st.checkbox("Do you want to see a sample of the data?"):
-        backtest = st.session_state.backtest
-        st.write(backtest.df.tail())
+        
+        if st.checkbox("Do you want to see a sample of the data?"):
+            backtest = st.session_state.backtest
+            st.write(backtest.df.tail())
   
     # show the user factor data if desired
     factor_data_writing = "Factors"
@@ -269,10 +270,11 @@ def main():
         fig_factors = px.line(backtest.factors[chart_factor_column],
             labels={"value": ""}, title=factor_data_choice)
         fig_factors.update_layout(showlegend=False)
-        st.plotly_chart(fig_factors)  
-    if st.checkbox("Do you want to see a sample of the factors?"):
-        backtest = st.session_state.backtest
-        st.write(backtest.factors.tail())  
+        st.plotly_chart(fig_factors)
+        
+        if st.checkbox("Do you want to see a sample of the factors?"):
+            backtest = st.session_state.backtest
+            st.write(backtest.factors.tail())  
         
     ####################################################################
     # RandomForest
@@ -282,8 +284,13 @@ def main():
     # only show once the factors are created
     if hasattr(st.session_state, 'backtest'):
         st.markdown("___")
-        st.markdown("___")
-        st.markdown("#### RandomForest Options")
+        rf_writing = "RandomForest"
+        rf_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{rf_writing}</p>'
+        st.markdown(rf_format, unsafe_allow_html=True)
+        
+        rf_options_writing = "RandomForest Options"
+        rf_options_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{rf_options_writing}</p>'
+        st.markdown(rf_options_format, unsafe_allow_html=True)
         st.markdown("RandomForests are used to estimate the probability "
             "that a future will be the highest returning over the holding period "
             "and to estimate that a future will be the lowest returning over "
@@ -299,8 +306,9 @@ def main():
             "but de-noising those that already exist (see sidebar for more details).")
 
         # run the RandomForest if desired
-        st.markdown("___")
-        st.markdown("#### Run RandomForest")
+        rf_run_writing = "Run RandomForest"
+        rf_run_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{rf_run_writing}</p>'
+        st.markdown(rf_run_format, unsafe_allow_html=True)
         st.markdown("Do this after (re-)running options above for the RandomForest, "
             "or re-running the factors so that you can access the new probabilities.")
         st.markdown("Note that this can take from 1 minute up to 20 minutes to run, "
@@ -311,8 +319,9 @@ def main():
             st.success(f'Probabilities updated in {round(st.session_state.running_time_random_forest,2)} seconds.')
             
         # show the user probability data if desired
-        st.markdown("___")
-        st.markdown("#### Probability Data")
+        probability_writing = "Probability Data"
+        probability_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{probability_writing}</p>'
+        st.markdown(probability_format, unsafe_allow_html=True
         st.markdown("This is the probability a future will be the highest "
             "returning in the holding period forward.")
         if st.checkbox("Do you want to see a sample of the probabilities?"):
