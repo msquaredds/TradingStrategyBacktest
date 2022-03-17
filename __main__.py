@@ -22,19 +22,24 @@ import streamlit as st
 def main():
     # get rid of unnecessary streamlit warning and make wider
     st.set_option('deprecation.showPyplotGlobalUse', False)
-    st.set_page_config(layout="wide")
     
     ####################################################################
     # Explanations
     ####################################################################
     
     # set up titles
-    st.title("Futures Trading Strategy using Machine Learning")
+    title_writing = "Futures Trading Strategy using Machine Learning"
+    title_format = f'<p style="color:Blue; font-size: 32px; font-weight: bold;">{title_writing}</p>'
+    st.markdown(title_format, unsafe_allow_html=True)
     st.sidebar.title("Futures Trading Strategy using Machine Learning")
     
     # credit
-    st.markdown("#### M Squared Data Science")
-    st.markdown("**Created by Alex Melesko**")
+    company_writing = "M Squared Data Science"
+    company_format = f'<p style="color:Blue; font-size: 24px; font-weight: bold;">{company_writing}</p>'
+    st.markdown(company_format, unsafe_allow_html=True)
+    name_writing = 'Created by Alex Melesko'
+    name_format = f'<p style="color:Blue; font-size: 24px; font-weight: bold;">{name_writing}</p>'
+    st.markdown(name_format, unsafe_allow_html=True)
 
     # get class with written output
     # we define that in a class to reduce clutter here
