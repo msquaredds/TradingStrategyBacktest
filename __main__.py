@@ -23,22 +23,26 @@ def main():
     # get rid of unnecessary streamlit warning and make wider
     st.set_option('deprecation.showPyplotGlobalUse', False)
     
+    # set up the page
+    st.set_page_config(page_title="Futures Trading Strategy using Machine Learning",
+        initial_sidebar_state="collapsed")
+    
     ####################################################################
     # Explanations
     ####################################################################
     
     # set up titles
     title_writing = "Futures Trading Strategy using Machine Learning"
-    title_format = f'<p style="color:DarkSlateBlue; font-size: 32px; font-weight: bold;">{title_writing}</p>'
+    title_format = f'<p style="color:DarkBlue; font-size: 32px; font-weight: bold;">{title_writing}</p>'
     st.markdown(title_format, unsafe_allow_html=True)
     st.sidebar.title("Futures Trading Strategy using Machine Learning")
     
     # credit
     company_writing = "M Squared Data Science"
-    company_format = f'<p style="color:DarkSlateBlue; font-size: 24px; font-weight: bold;">{company_writing}</p>'
+    company_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{company_writing}</p>'
     st.markdown(company_format, unsafe_allow_html=True)
     name_writing = 'Created by Alex Melesko'
-    name_format = f'<p style="color:DarkSlateBlue; font-size: 18px; font-weight: bold;">{name_writing}</p>'
+    name_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{name_writing}</p>'
     st.markdown(name_format, unsafe_allow_html=True)
 
     # get class with written output
@@ -48,7 +52,7 @@ def main():
     # write to give the user context
     st.markdown("___")
     intro_writing = "Intro"
-    intro_format = f'<p style="color:DarkSlateBlue; font-size: 24px; font-weight: bold;">{intro_writing}</p>'
+    intro_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{intro_writing}</p>'
     st.markdown(intro_format, unsafe_allow_html=True)
     st.markdown(written_outputs.intro_string)
     st.markdown(written_outputs.intro_explanation_string)
@@ -100,11 +104,11 @@ def main():
     # start by asking the user which futures they would like to include
     st.markdown("___")
     factors_writing = "Factors"
-    factors_format = f'<p style="color:DarkSlateBlue; font-size: 24px; font-weight: bold;">{factors_writing}</p>'
+    factors_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{factors_writing}</p>'
     st.markdown(factors_format, unsafe_allow_html=True)
     
     futures_choices_writing = "Futures Choices"
-    futures_choices_format = f'<p style="color:DarkSlateBlue; font-size: 18px; font-weight: bold;">{futures_choices_writing}</p>'
+    futures_choices_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{futures_choices_writing}</p>'
     st.markdown(futures_choices_format, unsafe_allow_html=True)
     st.markdown("These are the futures that will be used to create the "
         "factors (through their returns and/or volume) and are also the set "
@@ -134,7 +138,9 @@ def main():
         futures_count_choice = 1
         
     # then let them set the basic options
-    st.markdown("#### Basic Options")
+    basic_options_writing = "Basic Options"
+    basic_options_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{basic_options_writing}</p>'
+    st.markdown(basic_options_format, unsafe_allow_html=True)
     st.markdown("Let's set all basic options for the strategy.")
     lookback_choice = st.slider("What lookback period (in days) would you like?",
         min_value=10, max_value=250, value=90, help="This is the lookback to calculate "
@@ -160,8 +166,9 @@ def main():
         format="%.6f")
         
     # then decide which factors to use and how to create them
-    st.markdown("___")
-    st.markdown("#### Factor Choices")
+    factor_choices_writing = "Basic Options"
+    factor_choices_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{factor_choices_writing}</p>'
+    st.markdown(factor_choices_format, unsafe_allow_html=True)
     st.markdown("Now determine which factors to use.")
     st.markdown("Return-Based: Start with a series of each future's returns.")
     st.markdown("Volume-Based: Start with a series of each future's volume.")
@@ -206,8 +213,9 @@ def main():
     front_end_callbacks = ts.FrontEndCallbacks()
     
     # run the factors if desired
-    st.markdown("___")
-    st.markdown("#### Run Factors")
+    run_factors_writing = "Run Factors"
+    factor_choices_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{run_factors_writing}</p>'
+    st.markdown(factor_choices_format, unsafe_allow_html=True)
     st.markdown("Do this after (re-)setting options above, so that you can access "
         "the new factors. If you do this and want to see the new RandomForest "
         "output and strategy output, the buttons below will have to be run as well.")
@@ -221,12 +229,10 @@ def main():
         st.success(f'Factors updated in {round(st.session_state.running_time_factors,2)} seconds.')  
         
     # show the user underlying factor data if desired
-    st.markdown("___")
-    st.markdown("#### Underlying Factor Data")
-    if st.checkbox("Do you want to see a sample of the data?"):
-        backtest = st.session_state.backtest
-        st.write(backtest.df.tail())
-    if st.checkbox("Do you want to see charts of the data?"):
+    underlying_factor_data_writing = "Underlying Factor Data"
+    underlying_factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{underlying_factor_data_writing}</p>'
+    st.markdown(underlying_factor_data_format, unsafe_allow_html=True)
+    if hasattr(st.session_state, 'backtest'):
         backtest = st.session_state.backtest
         columns_to_pull = st.session_state.columns_to_pull
         # get the plain english version of the data column names so
@@ -241,14 +247,15 @@ def main():
             labels={"value": ""}, title=underlying_data_choice)
         fig_data.update_layout(showlegend=False)
         st.plotly_chart(fig_data)
-        
-    # show the user factor data if desired
-    st.markdown("___")
-    st.markdown("#### Factors")
-    if st.checkbox("Do you want to see a sample of the factors?"):
+    if st.checkbox("Do you want to see a sample of the data?"):
         backtest = st.session_state.backtest
-        st.write(backtest.factors.tail())
-    if st.checkbox("Do you want to see charts of the factors?"):
+        st.write(backtest.df.tail())
+  
+    # show the user factor data if desired
+    factor_data_writing = "Factors"
+    factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{factor_data_writing}</p>'
+    st.markdown(factor_data_format, unsafe_allow_html=True)
+    if hasattr(st.session_state, 'backtest'):
         backtest = st.session_state.backtest
         # get the plain english version of the data column names so
         # it's easier for the user to understand
@@ -262,7 +269,10 @@ def main():
         fig_factors = px.line(backtest.factors[chart_factor_column],
             labels={"value": ""}, title=factor_data_choice)
         fig_factors.update_layout(showlegend=False)
-        st.plotly_chart(fig_factors)    
+        st.plotly_chart(fig_factors)  
+    if st.checkbox("Do you want to see a sample of the factors?"):
+        backtest = st.session_state.backtest
+        st.write(backtest.factors.tail())  
         
     ####################################################################
     # RandomForest
