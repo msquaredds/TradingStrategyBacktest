@@ -421,12 +421,11 @@ def main():
                 
         # show the user results data if desired
         if st.session_state.backtest.strat_rets is not None:
-            results_output_writing = "Results"
-            results_output_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{results_output_writing}</p>'
-            st.markdown(results_output_format, unsafe_allow_html=True)
-            
-            # show chart
             backtest = st.session_state.backtest
+            # show chart
+            results_chart_writing = "Results Chart"
+            results_chart_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{results_chart_writing}</p>'
+            st.markdown(results_chart_format, unsafe_allow_html=True)
             # let the user determine what to show
             strategy_comparison_choice = st.multiselect("Would you like to compare against "
                 "the S&P 500 or 10 Year Treasury futures?",
@@ -435,6 +434,9 @@ def main():
             st.plotly_chart(fig_strat)
 
             # show metrics
+            metrics_writing = "Metrics"
+            metrics_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{metrics_writing}</p>'
+            st.markdown(metrics_format, unsafe_allow_html=True)
             backtest.strat_metrics()
             st.write(backtest.metrics)
 
