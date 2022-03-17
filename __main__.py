@@ -420,7 +420,7 @@ def main():
                 st.success(f'Strategy results updated in {round(st.session_state.running_time_strat_results,2)} seconds.')
                 
         # show the user results data if desired
-        if st.session_state.backtest.strat_rets is not None:'
+        if st.session_state.backtest.strat_rets is not None:
             results_output_writing = "Results"
             results_output_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{results_output_writing}</p>'
             st.markdown(results_output_format, unsafe_allow_html=True)
