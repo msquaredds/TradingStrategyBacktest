@@ -166,7 +166,7 @@ def main():
         format="%.6f")
         
     # then decide which factors to use and how to create them
-    factor_choices_writing = "Basic Options"
+    factor_choices_writing = "Factor Choices"
     factor_choices_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{factor_choices_writing}</p>'
     st.markdown(factor_choices_format, unsafe_allow_html=True)
     st.markdown("Now determine which factors to use.")
