@@ -229,10 +229,10 @@ def main():
         st.success(f'Factors updated in {round(st.session_state.running_time_factors,2)} seconds.')  
         
     # show the user underlying factor data if desired
-    underlying_factor_data_writing = "Underlying Factor Data"
-    underlying_factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{underlying_factor_data_writing}</p>'
-    st.markdown(underlying_factor_data_format, unsafe_allow_html=True)
     if hasattr(st.session_state, 'backtest'):
+        underlying_factor_data_writing = "Underlying Factor Data"
+        underlying_factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{underlying_factor_data_writing}</p>'
+        st.markdown(underlying_factor_data_format, unsafe_allow_html=True)
         backtest = st.session_state.backtest
         columns_to_pull = st.session_state.columns_to_pull
         # get the plain english version of the data column names so
@@ -247,16 +247,16 @@ def main():
             labels={"value": ""}, title=underlying_data_choice)
         fig_data.update_layout(showlegend=False)
         st.plotly_chart(fig_data)
-        
+        # show a data sample if the user wants
         if st.checkbox("Do you want to see a sample of the data?"):
             backtest = st.session_state.backtest
             st.write(backtest.df.tail())
   
     # show the user factor data if desired
-    factor_data_writing = "Factors"
-    factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{factor_data_writing}</p>'
-    st.markdown(factor_data_format, unsafe_allow_html=True)
     if hasattr(st.session_state, 'backtest'):
+        factor_data_writing = "Factors"
+        factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{factor_data_writing}</p>'
+        st.markdown(factor_data_format, unsafe_allow_html=True)
         backtest = st.session_state.backtest
         # get the plain english version of the data column names so
         # it's easier for the user to understand
@@ -271,7 +271,7 @@ def main():
             labels={"value": ""}, title=factor_data_choice)
         fig_factors.update_layout(showlegend=False)
         st.plotly_chart(fig_factors)
-        
+        # show a data sample if the user wants
         if st.checkbox("Do you want to see a sample of the factors?"):
             backtest = st.session_state.backtest
             st.write(backtest.factors.tail())  
