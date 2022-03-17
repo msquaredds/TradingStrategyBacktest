@@ -252,8 +252,7 @@ def main():
             backtest = st.session_state.backtest
             st.write(backtest.df.tail())
   
-    # show the user factor data if desired
-    if hasattr(st.session_state, 'backtest'):
+        # show the user factor data if desired
         factor_data_writing = "Factors"
         factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{factor_data_writing}</p>'
         st.markdown(factor_data_format, unsafe_allow_html=True)
@@ -319,15 +318,13 @@ def main():
             st.success(f'Probabilities updated in {round(st.session_state.running_time_random_forest,2)} seconds.')
             
         # show the user probability data if desired
-        probability_writing = "Probability Data"
-        probability_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{probability_writing}</p>'
-        st.markdown(probability_format, unsafe_allow_html=True)
-        st.markdown("This is the probability a future will be the highest "
-            "returning in the holding period forward.")
-        if st.checkbox("Do you want to see a sample of the probabilities?"):
-            backtest = st.session_state.backtest
-            st.write(backtest.probs.tail())
-        if st.checkbox("Do you want to see charts of the probabilities?"):
+        if st.session_state.backtest.probs is not None:
+            probability_writing = "Probability Data"
+            probability_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{probability_writing}</p>'
+            st.markdown(probability_format, unsafe_allow_html=True)
+            
+            st.markdown("This is the probability a future will be the highest "
+                "returning in the holding period forward.")
             backtest = st.session_state.backtest
             # get the plain english version of the data column names so
             # it's easier for the user to understand
@@ -342,6 +339,10 @@ def main():
                 labels={"value": ""}, title=prob_data_choice)
             fig_prob.update_layout(showlegend=False)
             st.plotly_chart(fig_prob)
+            # show a data sample if the user wants
+            if st.checkbox("Do you want to see a sample of the probabilities?"):
+                backtest = st.session_state.backtest
+                st.write(backtest.probs.tail())
 
     ####################################################################
     # Holdings
@@ -352,8 +353,13 @@ def main():
     if hasattr(st.session_state, 'backtest'):
         if st.session_state.backtest.probs is not None:
             st.markdown("___")
-            st.markdown("___")
-            st.markdown("#### Run Holding Allocation")
+            holdings_writing = "Run Holding Allocation"
+            holdings_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{holdings_writing}</p>'
+            st.markdown(holdings_format, unsafe_allow_html=True)
+            
+            holdings_run_writing = "Run Holdings"
+            holdings_run_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{holdings_run_writing}</p>'
+            st.markdown(holdings_run_format, unsafe_allow_html=True)
             st.markdown("Do this after (re-)running the RandomForest so you can get the new holdings.")
             st.markdown("This only takes a few seconds to run.")
             st.button('Run Holdings', on_click=front_end_callbacks.update_holdings,
@@ -361,41 +367,51 @@ def main():
             if hasattr(st.session_state, 'running_time_holdings'):
                 st.success(f'Holdings updated in {round(st.session_state.running_time_holdings,2)} seconds.')
                 
-            # show the user holdings data if desired
-            st.markdown("___")
-            st.markdown("#### Holdings Data")
+        # show the user holdings data if desired
+        if st.session_state.backtest.holdings is not None:
+            holdings_data_writing = "Holdings Data"
+            holdings_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{holdings_data_writing}</p>'
+            st.markdown(holdings_data_format, unsafe_allow_html=True)
+            
             st.markdown("This is the percent of the portfolio we would have in each "
                 "security if we started our trading in that period.")
+            backtest = st.session_state.backtest
+            # get the plain english version of the data column names so
+            # it's easier for the user to understand
+            hold_columns = backtest.holdings.columns
+            plain_english_hold_columns, mapping_dict = front_end_helper.future_data_plain_english_mapping(hold_columns)
+            # let the user select the data to show
+            hold_data_choice = st.selectbox("Which futures holdings do you want to see?", plain_english_hold_columns)
+            # get the column name in our data set
+            chart_hold_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(hold_data_choice)]
+            # create the chart and show it
+            fig_hold = px.line(backtest.holdings[chart_hold_column],
+                labels={"value": ""}, title=hold_data_choice)
+            fig_hold.update_layout(showlegend=False)
+            st.plotly_chart(fig_hold)
+            # show a data sample if the user wants
             if st.checkbox("Do you want to see a sample of the holdings?"):
                 backtest = st.session_state.backtest
                 st.write(backtest.holdings.tail())
-            if st.checkbox("Do you want to see charts of the holdings?"):
-                backtest = st.session_state.backtest
-                # get the plain english version of the data column names so
-                # it's easier for the user to understand
-                hold_columns = backtest.holdings.columns
-                plain_english_hold_columns, mapping_dict = front_end_helper.future_data_plain_english_mapping(hold_columns)
-                # let the user select the data to show
-                hold_data_choice = st.selectbox("Which futures holdings do you want to see?", plain_english_hold_columns)
-                # get the column name in our data set
-                chart_hold_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(hold_data_choice)]
-                # create the chart and show it
-                fig_hold = px.line(backtest.holdings[chart_hold_column],
-                    labels={"value": ""}, title=hold_data_choice)
-                fig_hold.update_layout(showlegend=False)
-                st.plotly_chart(fig_hold)
+
         
     ####################################################################
     # Results
     #################################################################### 
     
     # create the returns and metrics if desired
-    # only show once the probabilities are created
+    # only show once the holdings are created
     if hasattr(st.session_state, 'backtest'):
         if st.session_state.backtest.holdings is not None:
             st.markdown("___")
-            st.markdown("___")
-            st.markdown("#### Run Strategy Results")
+            results_writing = "Strategy Results"
+            results_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{results_writing}</p>'
+            st.markdown(results_format, unsafe_allow_html=True)
+            
+            # run results
+            results_run_writing = "Run Strategy Results"
+            results_run_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{results_run_writing}</p>'
+            st.markdown(results_run_format, unsafe_allow_html=True)
             st.markdown("Do this after (re-)running the holdings so you can get the "
                 "new returns and associated metrics.")
             st.markdown("Note that this can take up to a couple minutes to run.")
@@ -403,21 +419,24 @@ def main():
             if hasattr(st.session_state, 'running_time_strat_results'):
                 st.success(f'Strategy results updated in {round(st.session_state.running_time_strat_results,2)} seconds.')
                 
-            # show the user probability data if desired
-            st.markdown("___")
-            st.markdown("#### Results")
-            if st.checkbox("Do you want to see charts of the strategy?"):
-                backtest = st.session_state.backtest
-                # let the user determine what to show
-                strategy_comparison_choice = st.multiselect("Would you like to compare against "
-                    "the S&P 500 or 10 Year Treasury futures?",
-                    ("S&P 500", "10 Year Treasuries"), default=("S&P 500", "10 Year Treasuries"))
-                fig_strat = backtest.plot_strat(strategy_comparison_choice)
-                st.plotly_chart(fig_strat)
-            if st.checkbox("Do you want to see the strategy metrics?"):
-                backtest = st.session_state.backtest
-                backtest.strat_metrics()
-                st.write(backtest.metrics)
+        # show the user results data if desired
+        if st.session_state.backtest.strat_rets is not None:'
+            results_output_writing = "Results"
+            results_output_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{results_output_writing}</p>'
+            st.markdown(results_output_format, unsafe_allow_html=True)
+            
+            # show chart
+            backtest = st.session_state.backtest
+            # let the user determine what to show
+            strategy_comparison_choice = st.multiselect("Would you like to compare against "
+                "the S&P 500 or 10 Year Treasury futures?",
+                ("S&P 500", "10 Year Treasuries"), default=("S&P 500", "10 Year Treasuries"))
+            fig_strat = backtest.plot_strat(strategy_comparison_choice)
+            st.plotly_chart(fig_strat)
+
+            # show metrics
+            backtest.strat_metrics()
+            st.write(backtest.metrics)
 
 
 if __name__ == '__main__':
