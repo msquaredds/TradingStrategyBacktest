@@ -38,7 +38,8 @@ class WrittenOutputs(object):
         self.intro_explanation_string = '''Below is a brief explanation of what the program does,
             including options for the user to choose and outputs based on those options.
             For a more detailed explanation, including why methods were chosen,
-            trade-offs and potential future improvements, please see the sidebar.'''
+            trade-offs and potential future improvements, please see the sidebar 
+            (expand on left of screen).'''
             
         self.intro_details_string = '''The strategy starts by asking the user which
             futures (out of a set of 9) to use for creating factors and for investing

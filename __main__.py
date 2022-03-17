@@ -321,7 +321,7 @@ def main():
         # show the user probability data if desired
         probability_writing = "Probability Data"
         probability_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{probability_writing}</p>'
-        st.markdown(probability_format, unsafe_allow_html=True
+        st.markdown(probability_format, unsafe_allow_html=True)
         st.markdown("This is the probability a future will be the highest "
             "returning in the holding period forward.")
         if st.checkbox("Do you want to see a sample of the probabilities?"):
