@@ -1196,7 +1196,7 @@ class BackTest(ts.HelperFunctions):
     
         return output_df
       
-    def plot_strat(self, comparison_series=['ES1_Trade','TY1_Trade'], plain_english_mapping):
+    def plot_strat(self, comparison_series, plain_english_mapping):
         '''
         Plots the strategy with S&P 500 and 10y Bond if desired.
         
@@ -1207,8 +1207,7 @@ class BackTest(ts.HelperFunctions):
         
         Args:
             comparison_series(string list): The series to compare our
-                strategy against. Can currently be either 'S&P 500' or
-                '10 Year Treasuries' (as well as both or none of those).
+                strategy against.
             plain_english_mapping(sring dict): The mapping from the
                 futures column names to the names the user will see.
             
