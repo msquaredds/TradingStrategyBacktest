@@ -24,8 +24,8 @@ def main():
     st.set_option('deprecation.showPyplotGlobalUse', False)
     
     # set up the page
-    st.set_page_config(page_title="Futures Trading Strategy using Machine Learning",
-        initial_sidebar_state="collapsed", primaryColor="#00008B")
+    #st.set_page_config(page_title="Futures Trading Strategy using Machine Learning",
+    #    initial_sidebar_state="collapsed")
     
     ####################################################################
     # Explanations
