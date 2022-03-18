@@ -39,15 +39,17 @@ class FrontEndHelpers(object):
         Returns:
             columns_to_pull(string list): The set of data columns to
                 pull.
+            columns_of_interest(string list): The set of columns we
+                actually need for factors (we don't always need S&P 500
+                or 10 Year Treasury data for factors but we need to pull
+                it for comparison later).
         '''
+        # first define the columns to pull based on factor choices
         columns_to_pull = []
         
-        # we always need the S&P and 10y treasury in case the user wants
-        # to compare against those
-        columns_to_pull.append('ES1_Trade')
-        columns_to_pull.append('TY1_Trade')
-        
         if "S&P 500" in futures_choices:
+            if "Return-Based" in factor_choices:
+                columns_to_pull.append('ES1_Trade')
             if "Volume-Based" in factor_choices :
                 columns_to_pull.append('ES1_Volume')
             if "Slope of Term Structure" in factor_choices:
@@ -84,6 +86,8 @@ class FrontEndHelpers(object):
                 columns_to_pull.extend(['TU1_Last', 'TU2_Last'])
                 
         if "10 Year Treasuries" in futures_choices:
+            if "Return-Based" in factor_choices:
+                columns_to_pull.append('TY1_Trade')
             if "Volume-Based" in factor_choices:
                 columns_to_pull.append('TY1_Volume')
             if "Slope of Term Structure" in factor_choices:
@@ -130,7 +134,7 @@ class FrontEndHelpers(object):
                 columns_to_pull.extend(['JY1_Last', 'JY2_Last'])
                 
         if "S&P Volatility vs VIX" in factor_choices:
-            columns_to_pull.append('VIX_Last')    
+            columns_to_pull.append('VIX_Last')
                 
         return columns_to_pull
         
@@ -284,7 +288,31 @@ class FrontEndHelpers(object):
 
         return plain_english_factor_columns, plain_english_factor_dict
 
+    def future_rets_plain_english_mapping(self, columns_to_translate=None):
+        '''
+        Takes the columns of return data and map to what the user will
+        understand.
+        
+        Args:
+            columns_to_translate(string list): The column names to map.
+        
+        Returns:
+            plain_english_rets_columns(string list): The plain english
+                version of the rets data column names.
+            mapping_dict_rets(string dict): The full mapping of rets
+                data column names to plain english names.
+        '''
+        
+        # full mapping of data columns to plain english names
+        mapping_dict_rets = {'ES1_Trade':'S&P 500','TU1_Trade':'2 Year Treasuries',
+            'NQ1_Trade':'Nasdaq','YM1_Trade':'Dow Jones','TY1_Trade':'10 Year Treasuries',
+            'EC1_Trade':'EUR/USD','JY1_Trade':'JPY/USD','B1_Trade':'Brent Oil',
+            'GC1_Trade':'Gold'}
             
+        # choose only those names we have in our data
+        plain_english_rets_columns = [mapping_dict_rets[col_name] for col_name in columns_to_translate]
+        
+        return plain_english_rets_columns, mapping_dict_rets
         
         
         

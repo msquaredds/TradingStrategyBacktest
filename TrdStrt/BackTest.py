@@ -14,6 +14,7 @@ import math
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import sqlite3
 import streamlit as st
 
 from datetime import datetime
@@ -62,7 +63,7 @@ class BackTest(ts.HelperFunctions):
         df=None, days_to_expiry=None, factors=None, daily_rets=None, probs=None,
         holdings=None, strat_rets=None, strat_index=None, tranch_rets= None,
         tranch_index = None, metrics=None, first_data=None, start_of_strat=None,
-        start_of_max_data=None, start_of_index=None, trans_start=None):
+        start_of_max_data=None, start_of_index=None, trans_start=None, df_rets=None):
         '''
         Args:
             lookback (int): The trailing amount of data to use for all
@@ -106,6 +107,7 @@ class BackTest(ts.HelperFunctions):
             trans_start (int): When we start incorporating transaction
                 costs into the strategy (once it's fully up and
                 running).
+            df_rets (DataFrame): Holds the return data for all futures.
         '''
         self.lookback = lookback
         self.horizon = horizon
@@ -127,6 +129,7 @@ class BackTest(ts.HelperFunctions):
         self.start_of_max_data = start_of_max_data
         self.start_of_index = start_of_index
         self.trans_start = trans_start
+        self.df_rets = df_rets
             
     def find_expiries(self, weekday_index, day_index_range, month_set):
         '''
@@ -264,7 +267,7 @@ class BackTest(ts.HelperFunctions):
         return pca_data
         
     def create_returns(self, keep_startswith=None, keep_endswith=None,
-        remove_startswith=None, remove_endswith=None, horizon=1):
+        remove_startswith=None, remove_endswith=None, horizon=1, user_df=None):
         '''
         Creates return data for desired columns of self.df and the
         desired horizon.
@@ -282,20 +285,26 @@ class BackTest(ts.HelperFunctions):
             remove_endswith (string): Remove columns that end with these
                 strings.
             horizon (int): The length of the return period in days.
+            user_df (string): If supplied, this is what DataFrame will
+                be used to create the returns, rather than self.df.
                 
         Returns:
             rets (DataFrame): The set of returns.
         '''
         # make sure this can run
-        if self.df is None:
+        if self.df is None and user_df is None:
             st.error('************* Error *************')
             st.error('The DataFrame (df) must be defined for this class '
-                'before running the create_returns method.')
+                'of the user_df must be supplied before running the '
+                'create_returns method.')
             
         print('Running the create_returns method (', datetime.now().strftime("%Y-%m-%d %H:%M:%S"), ')')
         
         # first define the returns for everything
-        rets = self.df.pct_change(horizon)
+        if user_df is None:
+            rets = self.df.pct_change(horizon)
+        else:
+            rets = user_df.pct_change(horizon)
             
         # then remove anything we don't want and keep what we do want
         if keep_startswith is not None:
@@ -649,13 +658,13 @@ class BackTest(ts.HelperFunctions):
                 st.error('************* Error *************')
                 st.error('Daily Returns (daily_rets) must be defined before '
                     'running the factor creation with factor_vix_vs_vol.')
-            elif self.df is None:
+            elif self.df_rets is None:
                 st.error('************* Error *************')
-                st.error('The DataFrame (df) must be defined before '
+                st.error('The returns DataFrame (df_rets) must be defined before '
                     'running the factor creation with factor_vix_vs_vol.')
             else:
                 # we compare the vix to the rolling std dev of the s&p
-                sp_std = (self.daily_rets['ES1_Trade'].iloc[:end_loc]
+                sp_std = (self.df_rets['ES1_Trade'].iloc[:end_loc]
                     .rolling(window=self.lookback, min_periods=self.lookback)
                     .apply(lambda x: np.std(x,ddof=1), raw=True))
                 sp_std *= math.sqrt(252)
@@ -1116,6 +1125,9 @@ class BackTest(ts.HelperFunctions):
             st.error('Strategy returns (strat_rets) must be defined before '
                 ' running the metrics code.')
         
+        # reset the metrics in case re-run
+        self.metrics = None
+        
         # Store the horizon and lookback in a list
         temp_metrics = [self.lookback, self.horizon]
 
@@ -1140,18 +1152,51 @@ class BackTest(ts.HelperFunctions):
         temp_metrics.append(self.strat_rets.iloc[self.start_of_strat+self.lag:]
             .corr(self.daily_rets.loc[self.strat_rets.index[self.start_of_strat+self.lag]:, 'ES1_Trade']))
             
-        # Create the metrics object as dataframe or add to it if it
-        # already exists
-        if self.metrics is None:
-            metric_names = ['Lookback','Horizon','Average','Std_Dev','Skew',
-                'Sharpe','Drawdown','Corr_to_SandP']
-            index_name = 'Metrics'
-            self.metrics = pd.DataFrame(columns=metric_names)
-            self.metrics.loc[index_name] = temp_metrics
+        # Create the metrics object as dataframe
+        metric_names = ['Lookback','Horizon','Average','Std_Dev','Skew',
+            'Sharpe','Drawdown','Corr_to_SandP']
+        index_name = 'Metrics'
+        self.metrics = pd.DataFrame(columns=metric_names)
+        self.metrics.loc[index_name] = temp_metrics
+      
+    def _create_index(self, future_to_use, plain_english_name, input_df):
+        '''
+        Creates an index from return data.
+        
+        Args:
+            future_to_use(string): The name of the column to use in the
+                futures data (self.df_rets).
+            plain_english_name(string): The user-friendly name
+                associated with the future_to_use. This will be the
+                column name in our output_df so that when we chart it,
+                it looks nice.
+            input_df(DataFrame): An existing DataFrame to append the
+                new data to.
+        
+        Returns:
+            output_df(DataFrame): The final set of data with the new
+                index.
+        '''
+
+        # create the DataFrame if necessary
+        if input_df is None:
+            output_df = pd.DataFrame(index=self.strat_index.index, columns=[plain_english_name])
         else:
-            self.metrics = pd.concat(self.metrics, temp_metrics)
+            output_df = input_df
+            output_df[plain_english_name] = None
             
-    def plot_strat(self, comparison_series=['S&P 500','10 Year Treasuries']):
+        # iterate over returns and create the index
+        for index, row in output_df.iterrows():
+            if index == self.strat_index.index[self.start_of_index]:
+                output_df.loc[index,plain_english_name] = 1.0
+            elif index > self.strat_index.index[self.start_of_index]:
+                output_df.loc[index,plain_english_name] = (output_df.loc[output_df.index[output_df.index.get_loc(index) - 1],plain_english_name]
+                    *(1.0+self.df_rets.loc[index,plain_english_name]))
+        output_df[plain_english_name] = pd.to_numeric(output_df[plain_english_name])
+    
+        return output_df
+      
+    def plot_strat(self, comparison_series=['ES1_Trade','TY1_Trade'], plain_english_mapping):
         '''
         Plots the strategy with S&P 500 and 10y Bond if desired.
         
@@ -1164,6 +1209,8 @@ class BackTest(ts.HelperFunctions):
             comparison_series(string list): The series to compare our
                 strategy against. Can currently be either 'S&P 500' or
                 '10 Year Treasuries' (as well as both or none of those).
+            plain_english_mapping(sring dict): The mapping from the
+                futures column names to the names the user will see.
             
         Returns:
             fig_strat(plotly object): The figure to plot.
@@ -1175,35 +1222,17 @@ class BackTest(ts.HelperFunctions):
             st.error('************* Error *************')
             st.error('Strategy index (strat_index) must be defined before '
                 ' running plot_strat.')
-        if self.daily_rets is None:
+        if comparison_series is not None and self.daily_rets is None:
             st.error('************* Error *************')
-            st.error('Daily Returns (daily_rets) must be defined before '
-                ' running plot_strat.')
-            
-        # Create indexes for the S&P 500 if desired
+            st.error('The returns DataFrame (df_rets) must be defined before '
+                ' running plot_strat and comparing against other futures.')
+        
         df_indexes = None
-        if 'S&P 500' in comparison_series:
-            df_indexes = pd.DataFrame(index=self.strat_index.index, columns=['S&P 500'])
-            for index, row in df_indexes.iterrows():
-                if index == self.strat_index.index[self.start_of_index]:
-                    df_indexes.loc[index,'S&P 500'] = 1.0
-                elif index > self.strat_index.index[self.start_of_index]:
-                    df_indexes.loc[index,'S&P 500'] = (df_indexes.loc[df_indexes.index[df_indexes.index.get_loc(index) - 1],'S&P 500']
-                        *(1.0+self.daily_rets.loc[index,'ES1_Trade']))
-            df_indexes['S&P 500'] = pd.to_numeric(df_indexes['S&P 500'])
-        # Create indexes for the 10y Bond if desired
-        if '10 Year Treasuries' in comparison_series:
-            if df_indexes is None:
-                df_indexes = pd.DataFrame(index=self.strat_index.index, columns=['10 Year Treasuries'])
-            else:
-                df_indexes['10 Year Treasuries'] = None
-            for index, row in df_indexes.iterrows():
-                if index == self.strat_index.index[self.start_of_index]:
-                    df_indexes.loc[index,'10 Year Treasuries'] = 1.0
-                elif index > self.strat_index.index[self.start_of_index]:
-                    df_indexes.loc[index,'10 Year Treasuries'] = (df_indexes.loc[df_indexes.index[df_indexes.index.get_loc(index) - 1],'10 Year Treasuries']
-                        *(1.0+self.daily_rets.loc[index,'TY1_Trade']))
-            df_indexes['10 Year Treasuries'] = pd.to_numeric(df_indexes['10 Year Treasuries'])
+        # Create indexes for the futures if desired
+        if comparison_series is not None:
+            for curr_future in comparison_series:
+                plain_english_name = plain_english_mapping[curr_future]
+                df_indexes = self._create_index(curr_future, plain_english_name, df_indexes)
                     
         # Add the strategy to the data frame
         if df_indexes is None:
@@ -1212,6 +1241,6 @@ class BackTest(ts.HelperFunctions):
 
         # Plot the three series together
         fig_strat = px.line(df_indexes.iloc[self.start_of_index:,:],
-            labels={"value": "index"}, title="strategy returns")
+            labels={"value": "Index"}, title="Strategy Returns")
         
         return fig_strat

@@ -180,12 +180,12 @@ class HelperFunctions(object):
         if output_df == True:
             output_df = df_temp
             return output_df
-        
-        # add the temp dataframe to the existing dataframe if it exists
-        if self.df is not None:
-            self.df = pd.concat([self.df, df_temp], axis=1)
         else:
-            self.df = df_temp
+            # add the temp dataframe to the existing dataframe if it exists
+            if self.df is not None:
+                self.df = pd.concat([self.df, df_temp], axis=1)
+            else:
+                self.df = df_temp
         
     def store_data_df(self, db_connect, table_name, df=None, time_series=True):
         '''

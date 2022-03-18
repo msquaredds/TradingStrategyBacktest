@@ -7,7 +7,7 @@ Runs the futures trading strategy app.
 pull_db = 'futures_data.sqlite'
 table_name_pull = 'futures_data_clean_starting_2010'
 futures_map = {'ES1':'ES2','TU1':'TU2','NQ1':'NQ2','YM1':'YM2',
-        'TY1':'TY2','EC1':'EC2','JY1':'JY2','B1':'B2','GC1':'GC2'}
+    'TY1':'TY2','EC1':'EC2','JY1':'JY2','B1':'B2','GC1':'GC2'}
 #######################################################################
     
 
@@ -25,7 +25,7 @@ def main():
     
     # set up the page
     st.set_page_config(page_title="Futures Trading Strategy using Machine Learning",
-        initial_sidebar_state="collapsed")
+        initial_sidebar_state="collapsed", primaryColor="#00008B")
     
     ####################################################################
     # Explanations
@@ -422,15 +422,23 @@ def main():
         # show the user results data if desired
         if st.session_state.backtest.strat_rets is not None:
             backtest = st.session_state.backtest
+            # pull comparison data
+            db_connect_pull = sqlite3.connect(pull_db)
+            futures_for_rets = backtest.data_pull(db_connect_pull, table_name_pull, all_futures_rets_columns, output_df=True)
+            # get the daily returns for all factors
+            backtest.df_rets = backtest.create_returns(keep_endswith='Trade', horizon=1, user_df=futures_for_rets)
+            
             # show chart
             results_chart_writing = "Results Chart"
             results_chart_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{results_chart_writing}</p>'
             st.markdown(results_chart_format, unsafe_allow_html=True)
             # let the user determine what to show
+            plain_english_rets_columns, mapping_dict_rets = front_end_helper.future_rets_plain_english_mapping(backtest.df_rets.columns)
             strategy_comparison_choice = st.multiselect("Would you like to compare against "
-                "the S&P 500 or 10 Year Treasury futures?",
-                ("S&P 500", "10 Year Treasuries"), default=("S&P 500", "10 Year Treasuries"))
-            fig_strat = backtest.plot_strat(strategy_comparison_choice)
+                "any of the futures?", plain_english_rets_columns,
+                default=("S&P 500", "10 Year Treasuries"))
+            chart_result_column = list(mapping_dict_rets.keys())[list(mapping_dict_rets.values()).index(strategy_comparison_choice)]
+            fig_strat = backtest.plot_strat(chart_result_column, mapping_dict_rets)
             st.plotly_chart(fig_strat)
 
             # show metrics

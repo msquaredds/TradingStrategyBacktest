@@ -86,7 +86,6 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         
         # pull in the data based on the options chosen above
         columns_to_pull = self.define_data_pull_columns(futures_choices, factor_choices)
-        # set this so we can use it later
         
         # set up backtest class
         backtest = ts.BackTest(lookback_choice, horizon_choice, lag_choice,
