@@ -42,8 +42,11 @@ def main():
     company_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{company_writing}</p>'
     st.markdown(company_format, unsafe_allow_html=True)
     name_writing = 'Created by Alex Melesko'
-    name_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{name_writing}</p>'
+    email_address = 'mailto:alex.melesko@msquaredds.com'
+    email_writing = 'Email Me Here'
+    name_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{name_writing}</p><a href="{email_address}">{email_writing}</a>'
     st.markdown(name_format, unsafe_allow_html=True)
+    '<a href="mailto:hello@streamlit.io">Contact us !</a>'
 
     # get class with written output
     # we define that in a class to reduce clutter here
