@@ -1230,7 +1230,6 @@ class BackTest(ts.HelperFunctions):
         df_indexes = None
         # Create indexes for the futures if desired
         if comparison_series is not None:
-            st.write(comparison_series)
             for curr_future in comparison_series:
                 plain_english_name = plain_english_mapping[curr_future]
                 df_indexes = self._create_index(curr_future, plain_english_name, df_indexes)

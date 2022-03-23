@@ -130,8 +130,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         st.session_state.backtest = backtest
         
         # show user time to run
-        st.session_state.running_time_factors = time.time() - start_time
-        
+        st.session_state.running_time_factors = time.time() - start_time 
         
     def update_randomforest(self, tree_count_choice, node_count_choice, dependent_pca_choice):
         '''
@@ -158,7 +157,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         
         # determine the key index locations and run the random forest
         backtest.index_locs()
-        for curr_period in range(backtest.start_of_strat, backtest.factors.shape[0] + 1):
+        for curr_period in range(backtest.start_of_strat + 1, backtest.factors.shape[0] + 1):
             backtest.rf_classify(end_loc=curr_period, pca_depen=dependent_pca_choice,
                 tree_count=tree_count_choice, node_count=node_count_choice)
                 
