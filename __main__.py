@@ -390,6 +390,8 @@ def main():
             # let the user select the data to show
             hold_data_choice = st.selectbox("Which futures holdings do you want to see?", plain_english_hold_columns)
             # get the column name in our data set
+            st.write(mapping_dict)
+            st.write(hold_data_choice)
             chart_hold_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(hold_data_choice)]
             # create the chart and show it
             fig_hold = px.line(backtest.holdings[chart_hold_column],

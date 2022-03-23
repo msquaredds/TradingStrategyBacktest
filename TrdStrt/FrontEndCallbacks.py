@@ -102,7 +102,6 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         futures_for_rets = backtest.data_pull(db_connect_pull, table_name_pull, mapping_dict_rets, output_df=True)
         # get the daily returns for all factors
         backtest.df_rets = backtest.create_returns(keep_endswith='Trade', horizon=1, user_df=futures_for_rets)
-        print(backtest.df_rets)
         
         # get the futures expiries if we are using the slope factors
         # since that is used to calculate days until expiry and annualize
