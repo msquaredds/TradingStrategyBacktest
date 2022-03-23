@@ -42,10 +42,10 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
     def update_factors(self, futures_choices, lookback_choice, horizon_choice,
         lag_choice, min_data_choice, max_data_choice, trans_cost_choice,
         factor_choices, factor_pca_choice, factor_moment_choice, factor_zscore_choice,
-        pull_db, table_name_pull, futures_map):
+        pull_db, table_name_pull, futures_map, all_futures_rets_columns):
         '''
         Based on user inputs, pull data and define the factors for the
-        backtest.
+        backtest. Also pulls in all the return data for all futures.
         
         Args:
             futures_choices(string list): Which futures the user wants
@@ -77,6 +77,8 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
                 factor data from.
             futures_map(string dict): Maps the first to second futures
                 contract tickers.
+            all_futures_rets_columns(string list): All columns needed
+                to grab all the main futures price data.
             
         Returns:
             N/A
@@ -86,13 +88,23 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         
         # pull in the data based on the options chosen above
         columns_to_pull = self.define_data_pull_columns(futures_choices, factor_choices)
-        
         # set up backtest class
         backtest = ts.BackTest(lookback_choice, horizon_choice, lag_choice,
             min_data_choice, max_data_choice, trans_cost_choice)
         # set up and pull data
         db_connect_pull = sqlite3.connect(pull_db)
         backtest.data_pull(db_connect_pull, table_name_pull, columns_to_pull)
+        
+        # also pull daily return data for all futures since this can
+        # be used if the VIX vs S&P 500 Vol factor is created, and we
+        # will eventually need it anyway for the comparison between
+        # the strategy and the futures at the end
+        front_end_helper_local = ts.FrontEndHelpers()
+        _, mapping_dict_rets = front_end_helper_local.future_rets_plain_english_mapping()
+        futures_for_rets = backtest.data_pull(db_connect_pull, table_name_pull, mapping_dict_rets, output_df=True)
+        # get the daily returns for all factors
+        backtest.df_rets = backtest.create_returns(keep_endswith='Trade', horizon=1, user_df=futures_for_rets)
+        print(backtest.df_rets)
         
         # get the futures expiries if we are using the slope factors
         # since that is used to calculate days until expiry and annualize

@@ -43,7 +43,7 @@ def main():
     st.markdown(company_format, unsafe_allow_html=True)
     name_writing = 'Created by Alex Melesko'
     email_address = 'mailto:alex.melesko@msquaredds.com'
-    email_writing = 'Email Me Here'
+    email_writing = '  Email Me Here'
     name_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{name_writing}<a href="{email_address}">{email_writing}</a></p>'
     st.markdown(name_format, unsafe_allow_html=True)
 
@@ -237,6 +237,7 @@ def main():
         st.markdown(underlying_factor_data_format, unsafe_allow_html=True)
         backtest = st.session_state.backtest
         columns_to_pull = st.session_state.columns_to_pull
+        
         # get the plain english version of the data column names so
         # it's easier for the user to understand
         plain_english_data_columns, mapping_dict = front_end_helper.future_data_plain_english_mapping(columns_to_pull)
@@ -249,6 +250,7 @@ def main():
             labels={"value": ""}, title=underlying_data_choice)
         fig_data.update_layout(showlegend=False)
         st.plotly_chart(fig_data)
+        
         # show a data sample if the user wants
         if st.checkbox("Do you want to see a sample of the data?"):
             backtest = st.session_state.backtest
@@ -259,6 +261,7 @@ def main():
         factor_data_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{factor_data_writing}</p>'
         st.markdown(factor_data_format, unsafe_allow_html=True)
         backtest = st.session_state.backtest
+        
         # get the plain english version of the data column names so
         # it's easier for the user to understand
         factor_columns = backtest.factors.columns
@@ -272,6 +275,7 @@ def main():
             labels={"value": ""}, title=factor_data_choice)
         fig_factors.update_layout(showlegend=False)
         st.plotly_chart(fig_factors)
+        
         # show a data sample if the user wants
         if st.checkbox("Do you want to see a sample of the factors?"):
             backtest = st.session_state.backtest
@@ -341,6 +345,7 @@ def main():
                 labels={"value": ""}, title=prob_data_choice)
             fig_prob.update_layout(showlegend=False)
             st.plotly_chart(fig_prob)
+            
             # show a data sample if the user wants
             if st.checkbox("Do you want to see a sample of the probabilities?"):
                 backtest = st.session_state.backtest
@@ -391,6 +396,7 @@ def main():
                 labels={"value": ""}, title=hold_data_choice)
             fig_hold.update_layout(showlegend=False)
             st.plotly_chart(fig_hold)
+            
             # show a data sample if the user wants
             if st.checkbox("Do you want to see a sample of the holdings?"):
                 backtest = st.session_state.backtest
@@ -424,11 +430,6 @@ def main():
         # show the user results data if desired
         if st.session_state.backtest.strat_rets is not None:
             backtest = st.session_state.backtest
-            # pull comparison data
-            db_connect_pull = sqlite3.connect(pull_db)
-            futures_for_rets = backtest.data_pull(db_connect_pull, table_name_pull, all_futures_rets_columns, output_df=True)
-            # get the daily returns for all factors
-            backtest.df_rets = backtest.create_returns(keep_endswith='Trade', horizon=1, user_df=futures_for_rets)
             
             # show chart
             results_chart_writing = "Results Chart"
