@@ -451,6 +451,5 @@ def main():
             backtest.strat_metrics()
             st.write(backtest.metrics)
 
-
 if __name__ == '__main__':
     main()
