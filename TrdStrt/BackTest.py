@@ -674,7 +674,7 @@ class BackTest(ts.HelperFunctions):
             # combine onto the self.factors object
             vv_factors = pd.concat([vv_fact_mean, vv_fact_var,
                 vv_fact_skew], axis=1)
-            name_moments = moments.replace('Variance','var')
+            name_moments = [moments.replace('Variance','var') for mom in moments]
             vv_factors.columns = [f'vv_fact_{mom.lower()}' for mom in name_moments]
             all_raw_factors = pd.concat([all_raw_factors, vv_factors], axis=1)
                     
