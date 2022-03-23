@@ -1215,9 +1215,8 @@ class BackTest(ts.HelperFunctions):
         Returns:
             fig_strat(plotly object): The figure to plot.
         '''
-        st.write('here2')
         print('Running the plot_strat method (', datetime.now().strftime("%Y-%m-%d %H:%M:%S"), ')')
-        st.write('here3')
+
         # error handling for what we need defined before this can run
         if self.strat_index is None:
             st.error('************* Error *************')
