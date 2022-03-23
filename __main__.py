@@ -390,8 +390,6 @@ def main():
             # let the user select the data to show
             hold_data_choice = st.selectbox("Which futures holdings do you want to see?", plain_english_hold_columns)
             # get the column name in our data set
-            st.write(list(mapping_dict.values()))
-            st.write(hold_data_choice)
             chart_hold_column = list(mapping_dict.keys())[list(mapping_dict.values()).index(hold_data_choice)]
             # create the chart and show it
             fig_hold = px.line(backtest.holdings[chart_hold_column],
@@ -444,7 +442,8 @@ def main():
                 default=("S&P 500", "10 Year Treasuries"))
             st.write(strategy_comparison_choice)
             st.write(list(mapping_dict_rets.values()))
-            chart_result_column = list(mapping_dict_rets.keys())[list(mapping_dict_rets.values()).index(strategy_comparison_choice)]
+            chart_result_column = [k for k, v in mapping_dict_rets.items() if v in strategy_comparison_choice]
+            #chart_result_column = list(mapping_dict_rets.keys())[list(mapping_dict_rets.values()).index(strategy_comparison_choice)]
             fig_strat = backtest.plot_strat(chart_result_column, mapping_dict_rets)
             st.plotly_chart(fig_strat)
 
