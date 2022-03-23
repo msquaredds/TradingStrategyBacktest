@@ -444,6 +444,7 @@ def main():
             st.write(list(mapping_dict_rets.values()))
             chart_result_column = [k for k, v in mapping_dict_rets.items() if v in strategy_comparison_choice]
             #chart_result_column = list(mapping_dict_rets.keys())[list(mapping_dict_rets.values()).index(strategy_comparison_choice)]
+            st.write(chart_result_column)
             fig_strat = backtest.plot_strat(chart_result_column, mapping_dict_rets)
             st.plotly_chart(fig_strat)
 
