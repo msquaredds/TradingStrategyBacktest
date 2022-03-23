@@ -312,8 +312,10 @@ class FrontEndHelpers(object):
         # choose only those names we have in our data
         if columns_to_translate is not None:
             plain_english_rets_columns = [mapping_dict_rets[col_name] for col_name in columns_to_translate]
-        
-        return plain_english_rets_columns, mapping_dict_rets
+            return plain_english_rets_columns, mapping_dict_rets
+            
+        else:
+            return mapping_dict_rets
         
         
         

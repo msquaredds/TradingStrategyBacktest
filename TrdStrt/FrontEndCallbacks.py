@@ -98,7 +98,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
         # will eventually need it anyway for the comparison between
         # the strategy and the futures at the end
         front_end_helper_local = ts.FrontEndHelpers()
-        _, mapping_dict_rets = front_end_helper_local.future_rets_plain_english_mapping()
+        mapping_dict_rets = front_end_helper_local.future_rets_plain_english_mapping()
         futures_for_rets = backtest.data_pull(db_connect_pull, table_name_pull, mapping_dict_rets, output_df=True)
         # get the daily returns for all factors
         backtest.df_rets = backtest.create_returns(keep_endswith='Trade', horizon=1, user_df=futures_for_rets)
