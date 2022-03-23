@@ -1216,7 +1216,7 @@ class BackTest(ts.HelperFunctions):
             fig_strat(plotly object): The figure to plot.
         '''
         print('Running the plot_strat method (', datetime.now().strftime("%Y-%m-%d %H:%M:%S"), ')')
-        
+        st.write('here')
         # error handling for what we need defined before this can run
         if self.strat_index is None:
             st.error('************* Error *************')
@@ -1229,7 +1229,6 @@ class BackTest(ts.HelperFunctions):
         
         df_indexes = None
         # Create indexes for the futures if desired
-        st.write('here')
         if comparison_series is not None:
             for curr_future in comparison_series:
                 plain_english_name = plain_english_mapping[curr_future]
