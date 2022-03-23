@@ -441,6 +441,7 @@ def main():
                 "any of the futures?", plain_english_rets_columns,
                 default=("S&P 500", "10 Year Treasuries"))
             chart_result_column = [k for k, v in mapping_dict_rets.items() if v in strategy_comparison_choice]
+            st.write('here')
             fig_strat = backtest.plot_strat(chart_result_column, mapping_dict_rets)
             st.plotly_chart(fig_strat)
 
