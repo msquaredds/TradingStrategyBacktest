@@ -42,7 +42,7 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
     def update_factors(self, futures_choices, lookback_choice, horizon_choice,
         lag_choice, min_data_choice, max_data_choice, trans_cost_choice,
         factor_choices, factor_pca_choice, factor_moment_choice, factor_zscore_choice,
-        pull_db, table_name_pull, futures_map, all_futures_rets_columns):
+        pull_db, table_name_pull, futures_map):
         '''
         Based on user inputs, pull data and define the factors for the
         backtest. Also pulls in all the return data for all futures.
@@ -77,8 +77,6 @@ class FrontEndCallbacks(ts.FrontEndHelpers):
                 factor data from.
             futures_map(string dict): Maps the first to second futures
                 contract tickers.
-            all_futures_rets_columns(string list): All columns needed
-                to grab all the main futures price data.
             
         Returns:
             N/A
