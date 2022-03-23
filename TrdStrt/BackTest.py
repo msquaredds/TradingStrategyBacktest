@@ -1191,6 +1191,8 @@ class BackTest(ts.HelperFunctions):
             if index == self.strat_index.index[self.start_of_index]:
                 output_df.loc[index,plain_english_name] = 1.0
             elif index > self.strat_index.index[self.start_of_index]:
+                st.write(index)
+                st.write(future_to_use)
                 output_df.loc[index,plain_english_name] = (output_df.loc[output_df.index[output_df.index.get_loc(index) - 1],plain_english_name]
                     *(1.0+self.df_rets.loc[index,future_to_use]))
         output_df[plain_english_name] = pd.to_numeric(output_df[plain_english_name])
