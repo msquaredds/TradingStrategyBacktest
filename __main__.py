@@ -440,7 +440,6 @@ def main():
             strategy_comparison_choice = st.multiselect("Would you like to compare against "
                 "any of the futures?", plain_english_rets_columns,
                 default=("S&P 500", "10 Year Treasuries"))
-            st.write(plain_english_rets_columns)
             st.write(mapping_dict_rets)
             chart_result_column = list(mapping_dict_rets.keys())[list(mapping_dict_rets.values()).index(strategy_comparison_choice)]
             fig_strat = backtest.plot_strat(chart_result_column, mapping_dict_rets)
