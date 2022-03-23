@@ -310,7 +310,8 @@ class FrontEndHelpers(object):
             'GC1_Trade':'Gold'}
             
         # choose only those names we have in our data
-        plain_english_rets_columns = [mapping_dict_rets[col_name] for col_name in columns_to_translate]
+        if columns_to_translate is not None:
+            plain_english_rets_columns = [mapping_dict_rets[col_name] for col_name in columns_to_translate]
         
         return plain_english_rets_columns, mapping_dict_rets
         
