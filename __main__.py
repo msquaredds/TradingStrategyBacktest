@@ -442,7 +442,7 @@ def main():
                 default=("S&P 500", "10 Year Treasuries"))
             st.write(mapping_dict_rets) 
             st.write(strategy_comparison_choice)
-            st.write(mapping_dict_rets.values())
+            st.write(list(mapping_dict_rets.values()))
             chart_result_column = list(mapping_dict_rets.keys())[list(mapping_dict_rets.values()).index(strategy_comparison_choice)]
             fig_strat = backtest.plot_strat(chart_result_column, mapping_dict_rets)
             st.plotly_chart(fig_strat)
