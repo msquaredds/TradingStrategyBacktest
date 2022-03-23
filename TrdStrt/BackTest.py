@@ -1229,6 +1229,7 @@ class BackTest(ts.HelperFunctions):
         
         df_indexes = None
         # Create indexes for the futures if desired
+        st.write('here')
         if comparison_series is not None:
             for curr_future in comparison_series:
                 plain_english_name = plain_english_mapping[curr_future]
