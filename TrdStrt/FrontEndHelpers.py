@@ -259,29 +259,29 @@ class FrontEndHelpers(object):
         
         # rename the columns - see the .replace below for what we are
         # replacing with what
-        plain_english_factor_columns = [col.replace('ES1_','S&P 500 ') for col in columns_to_translate]
-        plain_english_factor_columns = [col.replace('NQ1_','Nasdaq ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('YM1_','Dow Jones ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('TU1_','2 Year Treasuries ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('TY1_','10 Year Treasuries ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('B1_','Brent Oil ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('GC1_','Gold ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('EC1_','EUR/USD ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('JY1_','JPY/USD ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('vv_fact_','VIX vs S&P Vol ') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('ES1','S&P 500') for col in columns_to_translate]
+        plain_english_factor_columns = [col.replace('NQ1','Nasdaq') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('YM1','Dow Jones') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('TU1','2 Year Treasuries') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('TY1','10 Year Treasuries') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('B1','Brent Oil') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('GC1','Gold') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('EC1','EUR/USD') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('JY1','JPY/USD') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('vv_fact','VIX vs S&P Vol') for col in plain_english_factor_columns]
         
-        plain_english_factor_columns = [col.replace('Trade_','Returns ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('Volume_','Volume ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('Slope_','Slope of Term Structure ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('Trade_','Returns ') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_Trade',' Returns') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_Volume',' Volume') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_Slope',' Slope of Term Structure') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_Trade',' Returns') for col in plain_english_factor_columns]
         
-        plain_english_factor_columns = [col.replace('mean_','Mean ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('var_','Variance ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('skew_','Skew ') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_mean',' Mean') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_var',' Variance') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_skew',' Skew') for col in plain_english_factor_columns]
         
-        plain_english_factor_columns = [col.replace('zx','Cross Z-Score ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('zt','Time Z-Score ') for col in plain_english_factor_columns]
-        plain_english_factor_columns = [col.replace('noz','No Z-Score ') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_zx',' Cross Z-Score') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_zt',' Time Z-Score') for col in plain_english_factor_columns]
+        plain_english_factor_columns = [col.replace('_noz',' No Z-Score') for col in plain_english_factor_columns]
         
         # create the dictionary
         plain_english_factor_dict = dict(zip(columns_to_translate, plain_english_factor_columns))
