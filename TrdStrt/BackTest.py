@@ -1159,12 +1159,6 @@ class BackTest(ts.HelperFunctions):
         index_name = 'Metrics'
         self.metrics = pd.DataFrame(columns=metric_names)
         self.metrics.loc[index_name] = temp_metrics
-        
-        # Style the metrics for output
-        self.metrics.style.format(formatter={'Lookback':"{:.0f}",
-            'Horizon':"{:.0f}",'Average':"{:.4f}",'Std_Dev':"{:.4f}",'Skew':"{:.4f}",
-            'Sharpe':"{:.4f}",'Drawdown':"{:.2%}",'Corr_to_SandP':"{:.2%}"},
-            axis=1)
       
     def _create_index(self, future_to_use, plain_english_name, input_df):
         '''
