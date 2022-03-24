@@ -451,8 +451,7 @@ def main():
             backtest.strat_metrics()
             st.dataframe(backtest.metrics.style.format(formatter={'Lookback':"{:.0f}",
                 'Horizon':"{:.0f}",'Average':"{:.4f}",'Std_Dev':"{:.4f}",'Skew':"{:.4f}",
-                'Sharpe':"{:.4f}",'Drawdown':"{:.2%}",'Corr_to_SandP':"{:.2%}"},
-                axis=1))
+                'Sharpe':"{:.4f}",'Drawdown':"{:.2%}",'Corr_to_SandP':"{:.2%}"})
 
 if __name__ == '__main__':
     main()
