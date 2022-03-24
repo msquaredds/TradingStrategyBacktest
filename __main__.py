@@ -449,7 +449,10 @@ def main():
             metrics_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{metrics_writing}</p>'
             st.markdown(metrics_format, unsafe_allow_html=True)
             backtest.strat_metrics()
-            st.dataframe(backtest.metrics)
+            st.dataframe(backtest.metrics.style.format(formatter={'Lookback':"{:.0f}",
+                'Horizon':"{:.0f}",'Average':"{:.4f}",'Std_Dev':"{:.4f}",'Skew':"{:.4f}",
+                'Sharpe':"{:.4f}",'Drawdown':"{:.2%}",'Corr_to_SandP':"{:.2%}"},
+                axis=1))
 
 if __name__ == '__main__':
     main()
