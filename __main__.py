@@ -41,10 +41,14 @@ def main():
     company_writing = "M Squared Data Science"
     company_format = f'<p style="color:DarkBlue; font-size: 24px; font-weight: bold;">{company_writing}</p>'
     st.markdown(company_format, unsafe_allow_html=True)
-    name_writing = 'Created by '
+    name_writing = 'Created by Alex Melesko'
     email_address = 'mailto:alex.melesko@msquaredds.com'
-    email_writing = 'Alex Melesko'
-    name_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{name_writing}<a href="{email_address}">{email_writing}</a></p>'
+    email_writing = '📧'
+    github_address = 'https://github.com/msquaredds'
+    github_writing = 'https://badgen.net/badge/icon/GitHub?icon=github&label'
+    name_format = (f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{name_writing}'
+        f'<a href="{email_address}">{email_writing}</a>'
+        f'<a href="{github_address}">{github_writing}</a></p>')
     st.markdown(name_format, unsafe_allow_html=True)
 
     # get class with written output
