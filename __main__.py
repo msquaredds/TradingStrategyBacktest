@@ -449,7 +449,7 @@ def main():
             metrics_format = f'<p style="color:DarkBlue; font-size: 18px; font-weight: bold;">{metrics_writing}</p>'
             st.markdown(metrics_format, unsafe_allow_html=True)
             backtest.strat_metrics()
-            st.write(backtest.metrics)
+            st.dataframe(backtest.metrics)
 
 if __name__ == '__main__':
     main()
